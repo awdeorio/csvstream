@@ -13,7 +13,7 @@ make test
 ```
 
 ## Example
-```
+```c++
 //csvstream_example.cpp
 #include "csvstream.h"
 #include <iostream>
