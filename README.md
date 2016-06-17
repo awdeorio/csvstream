@@ -7,7 +7,7 @@ http://andrewdeorio.com
 
 ## Quick start
 ```
-https://github.com/awdeorio/csvstream.git
+git clone https://github.com/awdeorio/csvstream.git
 cd csvstream/
 make test
 ```

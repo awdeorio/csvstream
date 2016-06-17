@@ -15,68 +15,74 @@
 using namespace std;
 
 
-// pretty print std::vector
-template <typename T>
-std::ostream & operator<<(std::ostream &os, const std::vector<T> &v) {
-  os << "[";
-  size_t j=0;
-  for (auto i:v) {
-    os << i;
-    if (j++ == v.size() - 1) break;
-    os << ", ";
-  }
-  os << "]";
-  return os;
-}
+void test_filename_ctor();
+void test_stream_ctor();
+void test_getheader();
 
-// pretty print std::pair
-template <typename K, typename V>
-std::ostream & operator<<(std::ostream &os, const std::pair<K,V> &p) {
-  os << p.first << ":" << p.second;
-  return os;
-}
-
-// pretty print std::map
-template <typename K, typename V>
-std::ostream & operator<<(std::ostream &os, const std::map<K,V> &m) {
-  os << "{";
-  size_t j=0;
-  for (auto i:m) {
-    os << i;
-    if (j++ == m.size() - 1) break;
-    os << ", ";
+const string input_filename = "csvstream_example.csv";
+const vector<string> header_correct = {"name", "animal"};
+const vector<map<string, string>> output_correct =
+  {
+    {{"name","Fergie"},{"animal","horse"}},
+    {{"name","Myrtle II"},{"animal","chicken"}},
+    {{"name","Oscar"},{"animal","cat"}},
   }
-  os << "}";
-  return os;
-}
+  ;
 
 
 int main() {
+  test_filename_ctor();
+  test_stream_ctor();
+  test_getheader();
+  cout << "csvstream_test PASSED";
+  return 0;
+}
 
-  // Open file
-  string filename = "test00-train.csv";
-  ifstream fin;
-  fin.open(filename.c_str());
+
+void test_filename_ctor() {
+  // Save actual output
+  vector<map<string, string>> output_observed;
+
+  csvstream csvin(input_filename);
+  csvstream::row_type row;
+  while (csvin >> row) {
+    output_observed.push_back(row);
+  }
+
+  // Check output
+  assert(output_observed == output_correct);
+}
+
+
+void test_stream_ctor() {
+  // Save actual output
+  vector<map<string, string>> output_observed;
+
+  ifstream fin(input_filename.c_str());
   if (!fin.is_open()) {
-    cout << "Error opening " << filename << "\n";
+    cout << "Error opening " << input_filename << "\n";
     exit(1);
   }
 
   // Create object
   csvstream csvin(fin);
 
-  // Check header
-  auto header = csvin.getheader();
-  cout << header << "\n";
-
   // Read file
   csvstream::row_type row;
   while (csvin >> row) {
-    if (row.size() == 0) break;
-    cout << row << "\n";
+    output_observed.push_back(row);
   }
+
+  // Check output
+  assert(output_observed == output_correct);
 
   // Clean up
   fin.close();
-  return 0;
+}
+
+
+void test_getheader() {
+  csvstream csvin(input_filename);
+  auto header = csvin.getheader();
+  assert(header == header_correct);
 }

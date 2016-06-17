@@ -1,8 +1,0 @@
-filename,target_name,data
-test00-test/livestock/doc1.txt,livestock,chicken cow
-test00-test/livestock/doc3.txt,livestock,cat cow cow
-test00-test/livestock/doc5.txt,livestock,cow goat
-test00-test/livestock/doc6.txt,livestock,chicken cat cow
-test00-test/pet/doc0.txt,pet,chicken cat
-test00-test/pet/doc2.txt,pet,cat cat cow
-test00-test/pet/doc4.txt,pet,cat goat
