@@ -86,6 +86,13 @@ public:
       i += 1;
     }
 
+    // Special case: trailing comma
+    // Example: 3 columns where the last one is blank: "datum1,datum2,
+    char last_char = line[line.size()-1];
+    if (last_char == ',') {
+      row[header[i]] = "";
+    }
+
     // Check length of row
     if (row.size() != header.size()) {
       auto msg = "Number of items in row does not match header. " +
