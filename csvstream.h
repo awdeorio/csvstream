@@ -34,7 +34,7 @@ public:
 
   // Constructor from filename
   csvstream(const std::string &filename, char delimiter=',')
-    : is(fin), delimiter(delimiter), line_no(0) {
+    : filename(filename), is(fin), delimiter(delimiter), line_no(0) {
 
     // Open file
     fin.open(filename.c_str());
@@ -48,7 +48,7 @@ public:
 
   // Constructor from stream
   csvstream(std::istream &is, char delimiter=',')
-    : is(is), delimiter(delimiter), line_no(0) {
+    : filename("[no filename]"), is(is), delimiter(delimiter), line_no(0) {
     read_header();
   }
 
@@ -69,6 +69,9 @@ public:
 
   // Stream extraction operator reads one row
   csvstream & operator>> (row_type& row) {
+    // Clear input row
+    row.clear();
+
     // Read one line from stream, bail out if we're at the end
     std::string line;
     if (!getline(is, line)) return *this;
@@ -85,8 +88,11 @@ public:
 
     // Check length of row
     if (row.size() != header.size()) {
-      auto msg = "Number of items in row does not match header. "
-        + filename + ":L" + std::to_string(line_no);
+      auto msg = "Number of items in row does not match header. " +
+        filename + ":L" + std::to_string(line_no) + " " +
+        "header.size() = " + std::to_string(header.size()) + " " +
+        "row.size() = " + std::to_string(row.size()) + " "
+          ;
       throw csvstream_exception(msg);
     }
 
@@ -94,14 +100,14 @@ public:
   }
 
 private:
-  // Stream in CSV format
-  std::istream &is;
+  // Filename.  Used for error messages.
+  std::string filename;
 
   // File stream in CSV format, used when library is called with filename ctor
   std::ifstream fin;
 
-  // Filename.  Used for error messages.
-  std::string filename;
+  // Stream in CSV format
+  std::istream &is;
 
   // Delimiter between columns
   char delimiter;
