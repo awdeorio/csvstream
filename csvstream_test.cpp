@@ -19,6 +19,9 @@ void test_filename_ctor();
 void test_stream_ctor();
 void test_getheader();
 void test_emptyfields();
+void test_tsv();
+void test_too_few_rows();
+void test_too_many_rows();
 
 
 int main() {
@@ -26,12 +29,15 @@ int main() {
   test_stream_ctor();
   test_getheader();
   test_emptyfields();
+  test_tsv();
+  test_too_few_rows();
+  test_too_many_rows();
   cout << "csvstream_test PASSED\n";
   return 0;
 }
 
 
-// data for test_filename_ctor() and test_stream_ctor()
+// data for next few unit tests
 const string input_filename_animals = "csvstream_example.csv";
 const vector<string> header_correct_animals = {"name", "animal"};
 const vector<map<string, string>> output_correct_animals =
@@ -47,6 +53,7 @@ void test_filename_ctor() {
   // Save actual output
   vector<map<string, string>> output_observed;
 
+  // Read file
   csvstream csvin(input_filename_animals);
   csvstream::row_type row;
   while (csvin >> row) {
@@ -62,16 +69,12 @@ void test_stream_ctor() {
   // Save actual output
   vector<map<string, string>> output_observed;
 
+  // Open file
   ifstream fin(input_filename_animals.c_str());
-  if (!fin.is_open()) {
-    cout << "Error opening " << input_filename_animals << "\n";
-    exit(1);
-  }
+  assert(fin.is_open());
 
-  // Create object
+  // Read file from stream
   csvstream csvin(fin);
-
-  // Read file
   csvstream::row_type row;
   while (csvin >> row) {
     output_observed.push_back(row);
@@ -107,13 +110,8 @@ void test_emptyfields() {
   // Save actual output
   vector<map<string, string>> output_observed;
 
-  // Create object
+  // Read stream
   csvstream csvin(iss);
-
-  // Check header
-  auto header = csvin.getheader();
-
-  // Read file
   csvstream::row_type row;
   try {
     while (csvin >> row) {
@@ -121,9 +119,83 @@ void test_emptyfields() {
     }
   } catch(csvstream_exception e) {
     cout << e.msg << endl;
-    throw;
-  }  
+    assert(0);
+  }
 
   // Check output
   assert(output_observed == output_correct);
+}
+
+
+void test_tsv() {
+  // Input
+  stringstream iss("a\tb\tc\nd\te\tf\n\t\t\n");
+
+  // Correct answer
+  const vector<map<string, string>> output_correct =
+    {
+      {{"a","d"},{"b","e"},{"c","f"}},
+      {{"a",""},{"b",""},{"c",""}},
+    }
+  ;
+
+  // Save actual output
+  vector<map<string, string>> output_observed;
+
+  // Read file
+  csvstream csvin(iss, '\t');
+  csvstream::row_type row;
+  try {
+    while (csvin >> row) {
+      output_observed.push_back(row);
+    }
+  } catch(csvstream_exception e) {
+    cout << e.msg << endl;
+    assert(0);
+  }
+
+  // Check output
+  assert(output_observed == output_correct);
+}
+
+
+void test_too_few_rows() {
+  // Input
+  stringstream iss("a,b,c\n,");
+
+  // Create object
+  csvstream csvin(iss);
+
+  // Read file
+  csvstream::row_type row;
+  try {
+    while (csvin >> row); // throw away data
+  } catch(csvstream_exception e) {
+    //if we caught an exception, then it worked
+    return;
+  }
+
+  // if we made it this far, then it didn't work
+  assert(0);
+}
+
+
+void test_too_many_rows() {
+  // Input
+  stringstream iss("a,b,c\n,,,");
+
+  // Create object
+  csvstream csvin(iss);
+
+  // Read file
+  csvstream::row_type row;
+  try {
+    while (csvin >> row); // throw away data
+  } catch(csvstream_exception e) {
+    //if we caught an exception, then it worked
+    return;
+  }
+
+  // if we made it this far, then it didn't work
+  assert(0);
 }

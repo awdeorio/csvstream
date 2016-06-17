@@ -89,7 +89,7 @@ public:
     // Special case: trailing comma
     // Example: 3 columns where the last one is blank: "datum1,datum2,
     char last_char = line[line.size()-1];
-    if (last_char == ',') {
+    if (last_char == delimiter) {
       row[header[i]] = "";
     }
 
