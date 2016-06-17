@@ -8,7 +8,7 @@
 # For documentaiton, see https://github.com/awdeorio/supermakefilecxx
 
 # Top level executable (should correspond to a cpp file with the same name)
-EXECUTABLE := csvstream_test
+EXECUTABLE := csvstream_example
 
 # Default target, this is what happens when you just type "make"
 all : $(EXECUTABLE)
