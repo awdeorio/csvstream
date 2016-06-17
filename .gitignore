@@ -1,0 +1,4 @@
+*.o
+*.out
+csvstream_example
+csvstream_test

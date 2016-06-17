@@ -63,7 +63,7 @@ int main() {
   }
 
   // Create object
-  auto csvin = csvstream(fin);
+  csvstream csvin(fin);
 
   // Check header
   auto header = csvin.getheader();
