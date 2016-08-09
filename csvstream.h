@@ -1,3 +1,5 @@
+#ifndef CSVSTREAM_H
+#define CSVSTREAM_H
 /* csvstream.h
  *
  * Andrew DeOrio <awdeorio@umich.edu>
@@ -145,3 +147,5 @@ private:
   csvstream(const csvstream &);
   csvstream & operator= (const csvstream &);
 };
+
+#endif
