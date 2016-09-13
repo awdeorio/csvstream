@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <regex>
 
 
 // A custom exception type
@@ -80,10 +81,15 @@ public:
     line_no += 1;
 
     // Parse line using delimiter
-    std::stringstream iss(line);
     size_t i = 0;
     std::string token;
-    while (getline(iss, token, delimiter)) {
+    std::string rgx_string = std::string("") + delimiter;
+    std::regex rgx(rgx_string);
+    std::sregex_token_iterator token_iter(line.begin(), line.end(), rgx, -1);
+    std::sregex_token_iterator end;
+    for ( ; token_iter != end; ++token_iter) {
+      token = *token_iter;
+      std::cout << "DEBUG: token=" << token << std::endl;
       row[header[i]] = token;
       i += 1;
     }
