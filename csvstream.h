@@ -27,9 +27,7 @@ public:
 
 
 // split a string by delimiter, taking quotes into account
-std::vector<std::string> split(const std::string &s) {
-  //FIXME: delimiter char
-  //FIXME: escape char
+std::vector<std::string> split(const std::string &s, char delimiter) {
 
   // Output is an ordered collection of tokens
   std::vector<std::string> out;
@@ -45,29 +43,23 @@ std::vector<std::string> split(const std::string &s) {
     std::cout << "DEBUG c = " << c << "\n";
 
     switch (state) {
-
     case UNQUOTED:
-      switch (c) {
-      case '"':
+      if (c == '"') {
         // Change states when we see a double quote
         state = QUOTED;
-        break;
-      case ',':
+      } else if (c == delimiter) {
         out.push_back("");
-        break;
-      default:
+      } else {
         // Append character to current token
         out.back() += c;
       }
       break;
 
     case QUOTED:
-      switch (c) {
-      case '"':
+      if (c == '"') {
         // Change states when we see a double quote
         state = UNQUOTED;
-        break;
-      default:
+      } else {
         // Append character to current token
         out.back() += c;
       }
@@ -139,7 +131,7 @@ public:
     line_no += 1;
 
     // Parse line using delimiter
-    auto data = split(line);
+    auto data = split(line, delimiter);
 
     // Check length of data
     if (data.size() != header.size()) {
@@ -187,7 +179,7 @@ private:
     }
 
     // save header
-    header = split(line);
+    header = split(line, delimiter);
   }
 
   // Disable copying because copying streams is bad!
