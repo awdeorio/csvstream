@@ -205,14 +205,43 @@ void test_too_many_rows() {
 
 void test_quotes() {
   // Input
-  stringstream iss("\"a\",b,c\n\"1\",2,3\n\"4,44\",5,6\n\"\\\"7\\\"\",,\n");
+  stringstream iss("\"a\",b,c\n\"1\",2,3\n\"4,44\",5,6\n");
 
   // Correct answer
   const vector<map<string, string>> output_correct =
     {
       {{"a","1"},{"b","2"},{"c","3"}},
       {{"a","4,44"},{"b","5"},{"c","6"}}, //quoted comma
-      {{"a","\"7\""},{"b",""},{"c",""}},  //escaped quote
+    }
+  ;
+
+  // Save actual output
+  vector<map<string, string>> output_observed;
+
+  // Read stream
+  csvstream csvin(iss);
+  csvstream::row_type row;
+  try {
+    while (csvin >> row) {
+      output_observed.push_back(row);
+    }
+  } catch(csvstream_exception e) {
+    cout << e.msg << endl;
+    assert(0);
+  }
+
+  // Check output
+  assert(output_observed == output_correct);
+}
+
+void test_escape_quotes() {
+  // Input
+  stringstream iss("\"a\",b,c\n\"\\\"1\\\"\",2,3\n");
+
+  // Correct answer
+  const vector<map<string, string>> output_correct =
+    {
+      {{"a","\"1\""},{"b","2"},{"c","3"}},  //escaped quote
     }
   ;
 

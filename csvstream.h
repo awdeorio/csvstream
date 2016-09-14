@@ -26,6 +26,64 @@ public:
 };
 
 
+// split a string by delimiter, taking quotes into account
+std::vector<std::string> split(const std::string &s) {
+  //FIXME: delimiter char
+  //FIXME: escape char
+
+  // Output is an ordered collection of tokens
+  std::vector<std::string> out;
+
+  // Add entry for first token
+  out.push_back("");
+
+  // Process one character at a time
+  enum State {QUOTED, UNQUOTED};
+  State state = UNQUOTED;
+  for (size_t i=0; i<s.size(); ++i) {
+    char c = s[i];
+    std::cout << "DEBUG c = " << c << "\n";
+
+    switch (state) {
+
+    case UNQUOTED:
+      switch (c) {
+      case '"':
+        // Change states when we see a double quote
+        state = QUOTED;
+        break;
+      case ',':
+        out.push_back("");
+        break;
+      default:
+        // Append character to current token
+        out.back() += c;
+      }
+      break;
+
+    case QUOTED:
+      switch (c) {
+      case '"':
+        // Change states when we see a double quote
+        state = UNQUOTED;
+        break;
+      default:
+        // Append character to current token
+        out.back() += c;
+      }
+      break;
+
+    default:
+      assert(0);
+      throw state;
+    }
+
+  }
+
+  return out;
+}
+
+
 // csvstream
 class csvstream {
 public:
@@ -81,34 +139,21 @@ public:
     line_no += 1;
 
     // Parse line using delimiter
-    size_t i = 0;
-    std::string token;
-    std::string rgx_string = std::string("") + delimiter;
-    std::regex rgx(rgx_string);
-    std::sregex_token_iterator token_iter(line.begin(), line.end(), rgx, -1);
-    std::sregex_token_iterator end;
-    for ( ; token_iter != end; ++token_iter) {
-      token = *token_iter;
-      std::cout << "DEBUG: token=" << token << std::endl;
-      row[header[i]] = token;
-      i += 1;
-    }
+    auto data = split(line);
 
-    // Special case: trailing comma
-    // Example: 3 columns where the last one is blank: "datum1,datum2,
-    char last_char = line[line.size()-1];
-    if (last_char == delimiter) {
-      row[header[i]] = "";
-    }
-
-    // Check length of row
-    if (row.size() != header.size()) {
+    // Check length of data
+    if (data.size() != header.size()) {
       auto msg = "Number of items in row does not match header. " +
         filename + ":L" + std::to_string(line_no) + " " +
         "header.size() = " + std::to_string(header.size()) + " " +
-        "row.size() = " + std::to_string(row.size()) + " "
+        "row.size() = " + std::to_string(data.size()) + " "
           ;
       throw csvstream_exception(msg);
+    }
+
+    // combine data and header into a row object
+    for (size_t i=0; i<data.size(); ++i) {
+      row[header[i]] = data[i];
     }
 
     return *this;
@@ -142,11 +187,7 @@ private:
     }
 
     // save header
-    std::stringstream iss(line);
-    std::string token;
-    while (getline(iss, token, delimiter)) {
-      header.push_back(token);
-    }
+    header = split(line);
   }
 
   // Disable copying because copying streams is bad!
