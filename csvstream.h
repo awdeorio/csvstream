@@ -40,7 +40,6 @@ std::vector<std::string> split(const std::string &s, char delimiter) {
   State state = UNQUOTED;
   for (size_t i=0; i<s.size(); ++i) {
     char c = s[i];
-    std::cout << "DEBUG c = " << c << "\n";
 
     switch (state) {
     case UNQUOTED:
