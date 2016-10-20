@@ -27,7 +27,7 @@ public:
 
 
 // split a string by delimiter, taking quotes into account
-std::vector<std::string> split(const std::string &s, char delimiter) {
+static std::vector<std::string> split(const std::string &s, char delimiter) {
 
   // Output is an ordered collection of tokens
   std::vector<std::string> out;
