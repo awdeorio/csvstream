@@ -17,15 +17,15 @@ int main() {
   // Open file
   csvstream csvin("csvstream_example.csv");
 
-  // A row is a map<string, string>, key = column name, value = datum
+  // A row is a map<string, string>, key = column name, value = cell datum
   csvstream::row_type row;
 
   // Read file
   while (csvin >> row) {
     cout << "row:" << "\n";
-    for (auto i:row) {
-      string column_name = i.first;
-      string datum = i.second;
+    for (auto col:row) {
+      string column_name = col.first;
+      string datum = col.second;
       cout << "  " << column_name << ": " << datum << "\n";
     }
   }

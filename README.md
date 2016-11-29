@@ -12,9 +12,63 @@ cd csvstream/
 make test
 ```
 
-## Example
+## Example 1
+This example reads one column from a CSV file.
+
 ```c++
-//csvstream_example.cpp
+// csvstream_example1.cpp
+#include "csvstream.h"
+#include <iostream>
+#include <string>
+#include <map>
+using namespace std;
+
+
+int main() {
+  // Open file
+  csvstream csvin("csvstream_example.csv");
+
+  // Rows have key = column name, value = cell datum
+  map<string, string> row;
+
+  // Extract the "animal" column
+  while (csvin >> row) {
+    cout << row["animal"] << "\n";
+  }
+
+}
+```
+
+Input
+```
+$ cat csvstream_example.csv
+name,animal
+Fergie,horse
+Myrtle II,chicken
+Oscar,cat
+```
+
+Compile
+```
+$ make csvstream_example1
+  # OR
+$ g++ -std=c++11 csvstream_example1.cpp -o csvstream_example1
+```
+
+Output
+```
+$ ./csvstream_example1
+horse
+chicken
+cat
+```
+
+
+## Example 2
+This example has an outer loop for each row and an inner loop for each column.
+
+```c++
+//csvstream_example2.cpp
 #include "csvstream.h"
 #include <iostream>
 #include <string>
@@ -32,9 +86,9 @@ int main() {
   // Read file
   while (csvin >> row) {
     cout << "row:" << "\n";
-    for (auto i:row) {
-      string column_name = i.first;
-      string datum = i.second;
+    for (auto col:row) {
+      string column_name = col.first;
+      string datum = col.second;
       cout << "  " << column_name << ": " << datum << "\n";
     }
   }
@@ -44,7 +98,7 @@ int main() {
 
 Input
 ```
-$ cat csvstream_example.csv 
+$ cat csvstream_example.csv
 name,animal
 Fergie,horse
 Myrtle II,chicken
@@ -53,14 +107,14 @@ Oscar,cat
 
 Compile
 ```
-$ make csvstream_example
+$ make csvstream_example2
   # OR
-$ g++ -std=c++11 csvstream_example.cpp -o csvstream_example
+$ g++ -std=c++11 csvstream_example2.cpp -o csvstream_example2
 ```
 
 Output
 ```
-$ ./csvstream_example
+$ ./csvstream_example2
 row:
   animal: horse
   name: Fergie
