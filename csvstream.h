@@ -74,6 +74,22 @@ static std::vector<std::string> split(const std::string &s, char delimiter) {
   return out;
 }
 
+static bool read_csv_line(std::istream &is, std::string &s) {
+  char c;
+
+  enum State {QUOTED, UNQUOTED};
+  State state = UNQUOTED;
+
+  while(is.get(c) && !(c == '\n' && state == UNQUOTED)) {
+    s.push_back(c);
+
+    if (c == '"') {
+      state = (state == UNQUOTED) ? QUOTED : UNQUOTED;
+    }
+  }
+
+  return !s.empty();
+}
 
 // csvstream
 class csvstream {
@@ -126,7 +142,7 @@ public:
 
     // Read one line from stream, bail out if we're at the end
     std::string line;
-    if (!getline(is, line)) return *this;
+    if (!read_csv_line(is, line)) return *this;
     line_no += 1;
 
     // Parse line using delimiter
