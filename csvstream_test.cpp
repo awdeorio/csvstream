@@ -20,8 +20,8 @@ void test_stream_ctor();
 void test_getheader();
 void test_emptyfields();
 void test_tsv();
-void test_too_few_rows();
-void test_too_many_rows();
+void test_too_few_cols();
+void test_no_newline_at_the_end();
 void test_quotes();
 
 
@@ -31,8 +31,8 @@ int main() {
   test_getheader();
   test_emptyfields();
   test_tsv();
-  test_too_few_rows();
-  test_too_many_rows();
+  test_too_few_cols();
+  test_no_newline_at_the_end();
   test_quotes();
   cout << "csvstream_test PASSED\n";
   return 0;
@@ -161,7 +161,7 @@ void test_tsv() {
 }
 
 
-void test_too_few_rows() {
+void test_too_few_cols() {
   // Input
   stringstream iss("a,b,c\n,");
 
@@ -182,7 +182,7 @@ void test_too_few_rows() {
 }
 
 
-void test_too_many_rows() {
+void test_no_newline_at_the_end() {
   // Input
   stringstream iss("a,b,c\n,,,");
 
