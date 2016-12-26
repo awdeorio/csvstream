@@ -26,31 +26,36 @@ public:
 };
 
 
-// split a string by delimiter, taking quotes into account
-static std::vector<std::string> split(const std::string &s, char delimiter) {
+// Read and tokenize one line from a stream
+static bool read_csv_line(std::istream &is, std::vector<std::string> &data,
+                   char delimiter=',', char newline='\n') {
 
-  // Output is an ordered collection of tokens
-  std::vector<std::string> out;
-
-  // Add entry for first token
-  out.push_back("");
+  // Add entry for first token, start with empty string
+  data.clear();
+  data.push_back(std::string());
 
   // Process one character at a time
+  char c = '\0';
   enum State {QUOTED, UNQUOTED};
   State state = UNQUOTED;
-  for (size_t i=0; i<s.size(); ++i) {
-    char c = s[i];
-
+  bool extracted_anything = false;
+  while(is.get(c)) {
+    extracted_anything = true;
     switch (state) {
     case UNQUOTED:
       if (c == '"') {
         // Change states when we see a double quote
         state = QUOTED;
       } else if (c == delimiter) {
-        out.push_back("");
+        data.push_back("");
+      } else if (c == newline) {
+        // If you see a newline *and it's not within a quoted token*, stop.
+        // This will consume the newline character.  NOTE: this won't work
+        // properly for windows-style newlines "\n\r".
+        goto multilevel_break; //This is a rare example where goto is OK
       } else {
         // Append character to current token
-        out.back() += c;
+        data.back() += c;
       }
       break;
 
@@ -60,18 +65,23 @@ static std::vector<std::string> split(const std::string &s, char delimiter) {
         state = UNQUOTED;
       } else {
         // Append character to current token
-        out.back() += c;
+        data.back() += c;
       }
       break;
 
     default:
       assert(0);
       throw state;
-    }
+    }//switch
+  }//while
 
-  }
+ multilevel_break:
+  // Clear the failbit.  This is to mimic the behavior of getline(), which will
+  // set the eofbit, but *not* the failbit if a partial line is read.
+  if (extracted_anything) is.clear();
 
-  return out;
+  // Return status is the underlying stream's status
+  return static_cast<bool>(is);
 }
 
 
@@ -85,8 +95,9 @@ public:
   typedef std::map<std::string, std::string> row_type;
 
   // Constructor from filename
-  csvstream(const std::string &filename, char delimiter=',')
-    : filename(filename), is(fin), delimiter(delimiter), line_no(0) {
+  csvstream(const std::string &filename, char delimiter=',', char newline='\n')
+    : filename(filename), is(fin),
+      delimiter(delimiter), newline(newline), line_no(0) {
 
     // Open file
     fin.open(filename.c_str());
@@ -99,8 +110,9 @@ public:
   }
 
   // Constructor from stream
-  csvstream(std::istream &is, char delimiter=',')
-    : filename("[no filename]"), is(is), delimiter(delimiter), line_no(0) {
+  csvstream(std::istream &is, char delimiter=',', char newline='\n')
+    : filename("[no filename]"), is(is),
+      delimiter(delimiter), newline(newline), line_no(0) {
     read_header();
   }
 
@@ -125,12 +137,9 @@ public:
     row.clear();
 
     // Read one line from stream, bail out if we're at the end
-    std::string line;
-    if (!getline(is, line)) return *this;
+    std::vector<std::string> data;
+    if (!read_csv_line(is, data, delimiter, newline)) return *this;
     line_no += 1;
-
-    // Parse line using delimiter
-    auto data = split(line, delimiter);
 
     // Check length of data
     if (data.size() != header.size()) {
@@ -163,6 +172,9 @@ private:
   // Delimiter between columns
   char delimiter;
 
+  // Delimiter between rows
+  char newline;
+
   // Line no in file.  Used for error messages
   size_t line_no;
 
@@ -172,13 +184,9 @@ private:
   // Process header, the first line of the file
   void read_header() {
     // read first line, which is the header
-    std::string line;
-    if (!getline(is, line)) {
+    if (!read_csv_line(is, header, delimiter, newline)) {
       throw csvstream_exception("error reading header");
     }
-
-    // save header
-    header = split(line, delimiter);
   }
 
   // Disable copying because copying streams is bad!

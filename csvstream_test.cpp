@@ -25,6 +25,8 @@ void test_too_few_cols_at_the_end();
 void test_too_many_cols();
 void test_no_newline_at_the_end();
 void test_quotes();
+void test_escape_quotes();
+void test_multiline_quotes();
 
 
 int main() {
@@ -38,6 +40,8 @@ int main() {
   test_too_many_cols();
   test_no_newline_at_the_end();
   test_quotes();
+  // test_escape_quotes();
+  test_multiline_quotes();
   cout << "csvstream_test PASSED\n";
   return 0;
 }
@@ -307,6 +311,32 @@ void test_escape_quotes() {
   vector<map<string, string>> output_observed;
 
   // Read stream
+  csvstream csvin(iss);
+  csvstream::row_type row;
+  try {
+    while (csvin >> row) {
+      output_observed.push_back(row);
+    }
+  } catch(csvstream_exception e) {
+    cout << e.msg << endl;
+    assert(0);
+  }
+
+  // Check output
+  assert(output_observed == output_correct);
+}
+
+void test_multiline_quotes() {
+  stringstream iss("a,b\n\"hello\nworld\",\"b\"\n");
+
+  const vector<map<string, string>> output_correct =
+    {
+      {{"a", "hello\nworld"},{"b", "b"}}
+    }
+  ;
+
+  vector<map<string, string>> output_observed;
+
   csvstream csvin(iss);
   csvstream::row_type row;
   try {
