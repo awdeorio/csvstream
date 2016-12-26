@@ -21,6 +21,7 @@ void test_getheader();
 void test_emptyfields();
 void test_tsv();
 void test_too_few_cols();
+void test_too_many_cols();
 void test_no_newline_at_the_end();
 void test_quotes();
 
@@ -32,6 +33,7 @@ int main() {
   test_emptyfields();
   test_tsv();
   test_too_few_cols();
+  test_too_many_cols();
   test_no_newline_at_the_end();
   test_quotes();
   cout << "csvstream_test PASSED\n";
@@ -182,7 +184,7 @@ void test_too_few_cols() {
 }
 
 
-void test_no_newline_at_the_end() {
+void test_too_many_cols() {
   // Input
   stringstream iss("a,b,c\n,,,");
 
@@ -200,6 +202,39 @@ void test_no_newline_at_the_end() {
 
   // if we made it this far, then it didn't work
   assert(0);
+}
+
+void test_no_newline_at_the_end() {
+  // Input
+  stringstream iss("a,b,c\n,,");
+
+  // Create object
+  csvstream csvin(iss);
+
+  // Correct answer
+  const vector<map<string, string>> output_correct =
+    {
+      {{"a",""},{"b",""},{"c",""}},
+    }
+  ;
+
+  // Save actual output
+  vector<map<string, string>> output_observed;
+
+  // Read stream
+  csvstream::row_type row;
+  try {
+    while (csvin >> row) {
+      output_observed.push_back(row);
+    }
+  } catch(csvstream_exception e) {
+    cout << e.msg << endl;
+    assert(0);
+  }
+
+  // Check output
+  assert(output_observed == output_correct);
+
 }
 
 
