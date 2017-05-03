@@ -27,8 +27,13 @@ public:
 
 
 // Read and tokenize one line from a stream
-static bool read_csv_line(std::istream &is, std::vector<std::string> &data,
-                   char delimiter=',', char newline='\n') {
+static bool read_csv_line
+(
+ std::istream &is,
+ std::vector<std::string> &data,
+ char delimiter=',',
+ char newline='\n'
+ ) {
 
   // Add entry for first token, start with empty string
   data.clear();
@@ -36,12 +41,12 @@ static bool read_csv_line(std::istream &is, std::vector<std::string> &data,
 
   // Process one character at a time
   char c = '\0';
-  enum State {QUOTED, UNQUOTED};
-  State state = UNQUOTED;
-  bool extracted_anything = false;
+  enum State {BEFORE_EXTRACTION, QUOTED, UNQUOTED};
+  State state = BEFORE_EXTRACTION;
   while(is.get(c)) {
-    extracted_anything = true;
     switch (state) {
+    case BEFORE_EXTRACTION:
+      state = UNQUOTED;
     case UNQUOTED:
       if (c == '"') {
         // Change states when we see a double quote
@@ -76,9 +81,10 @@ static bool read_csv_line(std::istream &is, std::vector<std::string> &data,
   }//while
 
  multilevel_break:
-  // Clear the failbit.  This is to mimic the behavior of getline(), which will
-  // set the eofbit, but *not* the failbit if a partial line is read.
-  if (extracted_anything) is.clear();
+  // Clear the failbit if we extracted anything.  This is to mimic the behavior
+  // of getline(), which will set the eofbit, but *not* the failbit if a partial
+  // line is read.
+  if (state != BEFORE_EXTRACTION) is.clear();
 
   // Return status is the underlying stream's status
   return static_cast<bool>(is);
