@@ -45,17 +45,21 @@ static bool read_csv_line
   while(is.get(c)) {
     switch (state) {
     case BEFORE_EXTRACTION:
+      // We need this state transition to properly handle cases where nothing
+      // is extracted.
       state = UNQUOTED;
+
     case UNQUOTED:
       if (c == '"') {
         // Change states when we see a double quote
         state = QUOTED;
       } else if (c == delimiter) {
+        // If you see a delimiter, then start a new field with an empty string
         data.push_back("");
       } else if (c == '\n' || c == '\r') {
-        // If you see a newline *and it's not within a quoted token*, stop.
-        // Works for UNIX (\n) and OSX (\r) line endings.  Consumes the
-        // newline character.
+        // If you see a newline *and it's not within a quoted token*, stop
+        // parsing the line.  Works for UNIX (\n) and OSX (\r) line endings.
+        // Consumes the newline character.
         //
         // FIXME: this won't work properly for windows-style newlines "\n\r".
         goto multilevel_break; //This is a rare example where goto is OK
@@ -78,6 +82,7 @@ static bool read_csv_line
     default:
       assert(0);
       throw state;
+
     }//switch
   }//while
 
