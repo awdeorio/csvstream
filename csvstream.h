@@ -26,11 +26,6 @@ public:
 };
 
 
-// Read and tokenize one line from a stream
-static bool read_csv_line(std::istream &is,
-                          std::vector<std::string> &data,
-                          char delimiter=',');
-
 // csvstream interface
 class csvstream {
 public:
