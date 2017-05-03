@@ -418,10 +418,10 @@ void test_osx_line_endings() {
 
 
 void test_windows_line_endings() {
-  // Test with input data containing Windows line endings: \n\r
+  // Test with input data containing Windows line endings: \r\n
 
   // Input
-  stringstream iss("a,b,c\n\r1,2,3\n\r,,\n\r");
+  stringstream iss("a,b,c\r\n1,2,3\r\n,,\r\n");
 
   // Correct answer
   const vector<map<string, string>> output_correct =

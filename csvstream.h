@@ -139,8 +139,8 @@ static bool read_csv_line(std::istream &is,
       break;
 
     case END:
-      if (c == '\r') {
-        // Handle second character of a Windows line ending (\n\r).  Do
+      if (c == '\n') {
+        // Handle second character of a Windows line ending (\r\n).  Do
         // nothing, only consume the character.
       } else {
         // If this wasn't a Windows line ending, then put character back for
