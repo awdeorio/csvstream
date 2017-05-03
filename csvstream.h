@@ -40,11 +40,11 @@ static bool read_csv_line
 
   // Process one character at a time
   char c = '\0';
-  enum State {BEFORE_EXTRACTION, QUOTED, UNQUOTED};
-  State state = BEFORE_EXTRACTION;
+  enum State {BEGIN, QUOTED, UNQUOTED, END};
+  State state = BEGIN;
   while(is.get(c)) {
     switch (state) {
-    case BEFORE_EXTRACTION:
+    case BEGIN:
       // We need this state transition to properly handle cases where nothing
       // is extracted.
       state = UNQUOTED;
@@ -57,12 +57,10 @@ static bool read_csv_line
         // If you see a delimiter, then start a new field with an empty string
         data.push_back("");
       } else if (c == '\n' || c == '\r') {
-        // If you see a newline *and it's not within a quoted token*, stop
+        // If you see a line ending *and it's not within a quoted token*, stop
         // parsing the line.  Works for UNIX (\n) and OSX (\r) line endings.
-        // Consumes the newline character.
-        //
-        // FIXME: this won't work properly for windows-style newlines "\n\r".
-        goto multilevel_break; //This is a rare example where goto is OK
+        // Consumes the line ending character.
+        state = END;
       } else {
         // Append character to current token
         data.back() += c;
@@ -79,6 +77,20 @@ static bool read_csv_line
       }
       break;
 
+    case END:
+      if (c == '\r') {
+        // Handle second character of a Windows line ending (\n\r).  Do
+        // nothing, only consume the character.
+      } else {
+        // If this wasn't a Windows line ending, then put character back for
+        // the next call to read_csv_line()
+        is.unget();
+      }
+
+      // We're done with this line, so break out of both the switch and loop.
+      goto multilevel_break; //This is a rare example where goto is OK
+      break;
+
     default:
       assert(0);
       throw state;
@@ -90,7 +102,7 @@ static bool read_csv_line
   // Clear the failbit if we extracted anything.  This is to mimic the behavior
   // of getline(), which will set the eofbit, but *not* the failbit if a partial
   // line is read.
-  if (state != BEFORE_EXTRACTION) is.clear();
+  if (state != BEGIN) is.clear();
 
   // Return status is the underlying stream's status
   return static_cast<bool>(is);
