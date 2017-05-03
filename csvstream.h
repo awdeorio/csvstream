@@ -27,12 +27,73 @@ public:
 
 
 // Read and tokenize one line from a stream
-static bool read_csv_line
-(
- std::istream &is,
- std::vector<std::string> &data,
- char delimiter=','
- ) {
+static bool read_csv_line(std::istream &is,
+                          std::vector<std::string> &data,
+                          char delimiter=',');
+
+// csvstream interface
+class csvstream {
+public:
+  // A header is a vector of column names, in order
+  typedef std::vector<std::string> header_type;
+
+  // A row is a map of (column name, datum) pairs from one row
+  typedef std::map<std::string, std::string> row_type;
+
+  // Constructor from filename
+  csvstream(const std::string &filename, char delimiter=',');
+
+  // Constructor from stream
+  csvstream(std::istream &is, char delimiter=',');
+
+  // Destructor
+  ~csvstream();
+
+  // Return true if an error flag on underlying stream is set
+  explicit operator bool() const;
+
+  // Return header processed by constructor
+  header_type getheader() const;
+
+  // Stream extraction operator reads one row
+  csvstream & operator>> (row_type& row);
+
+private:
+  // Filename.  Used for error messages.
+  std::string filename;
+
+  // File stream in CSV format, used when library is called with filename ctor
+  std::ifstream fin;
+
+  // Stream in CSV format
+  std::istream &is;
+
+  // Delimiter between columns
+  char delimiter;
+
+  // Line no in file.  Used for error messages
+  size_t line_no;
+
+  // Store header column names
+  header_type header;
+
+  // Process header, the first line of the file
+  void read_header();
+
+  // Disable copying because copying streams is bad!
+  csvstream(const csvstream &);
+  csvstream & operator= (const csvstream &);
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Implementation
+
+// Read and tokenize one line from a stream
+static bool read_csv_line(std::istream &is,
+                          std::vector<std::string> &data,
+                          char delimiter
+                          ) {
 
   // Add entry for first token, start with empty string
   data.clear();
@@ -109,110 +170,75 @@ static bool read_csv_line
 }
 
 
-// csvstream
-class csvstream {
-public:
-  // A header is a vector of column names, in order
-  typedef std::vector<std::string> header_type;
+csvstream::csvstream(const std::string &filename, char delimiter)
+: filename(filename), is(fin),
+  delimiter(delimiter), line_no(0) {
 
-  // A row is a map of (column name, datum) pairs from one row
-  typedef std::map<std::string, std::string> row_type;
-
-  // Constructor from filename
-  csvstream(const std::string &filename, char delimiter=',')
-    : filename(filename), is(fin),
-      delimiter(delimiter), line_no(0) {
-
-    // Open file
-    fin.open(filename.c_str());
-    if (!fin.is_open()) {
-      throw csvstream_exception("Error opening file: " + filename);
-    }
-
-    // Process header
-    read_header();
+  // Open file
+  fin.open(filename.c_str());
+  if (!fin.is_open()) {
+    throw csvstream_exception("Error opening file: " + filename);
   }
 
-  // Constructor from stream
-  csvstream(std::istream &is, char delimiter=',')
-    : filename("[no filename]"), is(is),
-      delimiter(delimiter), line_no(0) {
-    read_header();
+  // Process header
+  read_header();
+}
+
+
+csvstream::csvstream(std::istream &is, char delimiter)
+: filename("[no filename]"), is(is), delimiter(delimiter), line_no(0) {
+  read_header();
+}
+
+
+csvstream::~csvstream() {
+  if (fin.is_open()) fin.close();
+}
+
+
+csvstream::operator bool() const {
+  return static_cast<bool>(is);
+}
+
+
+csvstream::header_type csvstream::getheader() const {
+  return header;
+}
+
+
+csvstream & csvstream::operator>> (row_type& row) {
+  // Clear input row
+  row.clear();
+
+  // Read one line from stream, bail out if we're at the end
+  std::vector<std::string> data;
+  if (!read_csv_line(is, data, delimiter)) return *this;
+  line_no += 1;
+
+  // Check length of data
+  if (data.size() != header.size()) {
+    auto msg = "Number of items in row does not match header. " +
+      filename + ":L" + std::to_string(line_no) + " " +
+      "header.size() = " + std::to_string(header.size()) + " " +
+      "row.size() = " + std::to_string(data.size()) + " "
+      ;
+    throw csvstream_exception(msg);
   }
 
-  // Destructor
-  ~csvstream() {
-    if (fin.is_open()) fin.close();
+  // combine data and header into a row object
+  for (size_t i=0; i<data.size(); ++i) {
+    row[header[i]] = data[i];
   }
 
-  // Returns whether an error flag on underlying stream is set
-  explicit operator bool() const {
-    return static_cast<bool>(is);
+  return *this;
+}
+
+
+void csvstream::read_header() {
+  // read first line, which is the header
+  if (!read_csv_line(is, header, delimiter)) {
+    throw csvstream_exception("error reading header");
   }
-
-  // Return header processed by constructor
-  header_type getheader() const {
-    return header;
-  }
-
-  // Stream extraction operator reads one row
-  csvstream & operator>> (row_type& row) {
-    // Clear input row
-    row.clear();
-
-    // Read one line from stream, bail out if we're at the end
-    std::vector<std::string> data;
-    if (!read_csv_line(is, data, delimiter)) return *this;
-    line_no += 1;
-
-    // Check length of data
-    if (data.size() != header.size()) {
-      auto msg = "Number of items in row does not match header. " +
-        filename + ":L" + std::to_string(line_no) + " " +
-        "header.size() = " + std::to_string(header.size()) + " " +
-        "row.size() = " + std::to_string(data.size()) + " "
-          ;
-      throw csvstream_exception(msg);
-    }
-
-    // combine data and header into a row object
-    for (size_t i=0; i<data.size(); ++i) {
-      row[header[i]] = data[i];
-    }
-
-    return *this;
-  }
-
-private:
-  // Filename.  Used for error messages.
-  std::string filename;
-
-  // File stream in CSV format, used when library is called with filename ctor
-  std::ifstream fin;
-
-  // Stream in CSV format
-  std::istream &is;
-
-  // Delimiter between columns
-  char delimiter;
-
-  // Line no in file.  Used for error messages
-  size_t line_no;
-
-  // Store header column names
-  header_type header;
-
-  // Process header, the first line of the file
-  void read_header() {
-    // read first line, which is the header
-    if (!read_csv_line(is, header, delimiter)) {
-      throw csvstream_exception("error reading header");
-    }
-  }
-
-  // Disable copying because copying streams is bad!
-  csvstream(const csvstream &);
-  csvstream & operator= (const csvstream &);
-};
+}
 
 #endif
