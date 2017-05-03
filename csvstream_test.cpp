@@ -60,6 +60,8 @@ const vector<map<string, string>> output_correct_animals =
 
 
 void test_filename_ctor() {
+  // Test creating a csvstream object from a filename string
+
   // Save actual output
   vector<map<string, string>> output_observed;
 
@@ -76,6 +78,8 @@ void test_filename_ctor() {
 
 
 void test_stream_ctor() {
+  // Test creating a csvstream object from a stream
+
   // Save actual output
   vector<map<string, string>> output_observed;
 
@@ -99,6 +103,8 @@ void test_stream_ctor() {
 
 
 void test_getheader() {
+  // Test reading header from first line of CSV file
+
   csvstream csvin(input_filename_animals);
   auto header = csvin.getheader();
   assert(header == header_correct_animals);
@@ -106,6 +112,8 @@ void test_getheader() {
 
 
 void test_emptyfields() {
+  // Test with input data containing empty fields (consecutive commas)
+
   // Input
   stringstream iss("a,b,c\n,,\n,,\n");
 
@@ -138,6 +146,8 @@ void test_emptyfields() {
 
 
 void test_tsv() {
+  // Test with tab separated data
+
   // Input
   stringstream iss("a\tb\tc\nd\te\tf\n\t\t\n");
 
@@ -170,6 +180,9 @@ void test_tsv() {
 
 
 void test_too_few_cols_in_the_middle() {
+  // Test error condition: a row in the middle of the file that doesn't have
+  // enough fields
+
   // Input
   stringstream iss("a,b,c\n,\nd,e,f");
 
@@ -191,6 +204,8 @@ void test_too_few_cols_in_the_middle() {
 
 
 void test_too_few_cols_at_the_end() {
+  // Test error condition: last row doesn't have enough fields
+
   // Input
   stringstream iss("a,b,c\n,");
 
@@ -212,6 +227,8 @@ void test_too_few_cols_at_the_end() {
 
 
 void test_too_many_cols() {
+  // Test error condition: row with too many fields
+
   // Input
   stringstream iss("a,b,c\n,,,");
 
@@ -231,7 +248,10 @@ void test_too_many_cols() {
   assert(0);
 }
 
+
 void test_no_newline_at_the_end() {
+  // Test with input that has no newline at the end
+
   // Input
   stringstream iss("a,b,c\n,,");
 
@@ -296,7 +316,10 @@ void test_quotes() {
   assert(output_observed == output_correct);
 }
 
+
 void test_escape_quotes() {
+  // Test with input data containing escaped quotes
+
   // Input
   stringstream iss("\"a\",b,c\n\"\\\"1\\\"\",2,3\n");
 
@@ -326,7 +349,10 @@ void test_escape_quotes() {
   assert(output_observed == output_correct);
 }
 
+
 void test_multiline_quotes() {
+  // Test with input data containing a quoted field containing newlines
+
   stringstream iss("a,b\n\"hello\nworld\",\"b\"\n");
 
   const vector<map<string, string>> output_correct =
