@@ -31,8 +31,7 @@ static bool read_csv_line
 (
  std::istream &is,
  std::vector<std::string> &data,
- char delimiter=',',
- char newline='\n'
+ char delimiter=','
  ) {
 
   // Add entry for first token, start with empty string
@@ -53,10 +52,12 @@ static bool read_csv_line
         state = QUOTED;
       } else if (c == delimiter) {
         data.push_back("");
-      } else if (c == newline) {
+      } else if (c == '\n' || c == '\r') {
         // If you see a newline *and it's not within a quoted token*, stop.
-        // This will consume the newline character.  NOTE: this won't work
-        // properly for windows-style newlines "\n\r".
+        // Works for UNIX (\n) and OSX (\r) line endings.  Consumes the
+        // newline character.
+        //
+        // FIXME: this won't work properly for windows-style newlines "\n\r".
         goto multilevel_break; //This is a rare example where goto is OK
       } else {
         // Append character to current token
@@ -101,9 +102,9 @@ public:
   typedef std::map<std::string, std::string> row_type;
 
   // Constructor from filename
-  csvstream(const std::string &filename, char delimiter=',', char newline='\n')
+  csvstream(const std::string &filename, char delimiter=',')
     : filename(filename), is(fin),
-      delimiter(delimiter), newline(newline), line_no(0) {
+      delimiter(delimiter), line_no(0) {
 
     // Open file
     fin.open(filename.c_str());
@@ -116,9 +117,9 @@ public:
   }
 
   // Constructor from stream
-  csvstream(std::istream &is, char delimiter=',', char newline='\n')
+  csvstream(std::istream &is, char delimiter=',')
     : filename("[no filename]"), is(is),
-      delimiter(delimiter), newline(newline), line_no(0) {
+      delimiter(delimiter), line_no(0) {
     read_header();
   }
 
@@ -144,7 +145,7 @@ public:
 
     // Read one line from stream, bail out if we're at the end
     std::vector<std::string> data;
-    if (!read_csv_line(is, data, delimiter, newline)) return *this;
+    if (!read_csv_line(is, data, delimiter)) return *this;
     line_no += 1;
 
     // Check length of data
@@ -178,9 +179,6 @@ private:
   // Delimiter between columns
   char delimiter;
 
-  // Delimiter between rows
-  char newline;
-
   // Line no in file.  Used for error messages
   size_t line_no;
 
@@ -190,7 +188,7 @@ private:
   // Process header, the first line of the file
   void read_header() {
     // read first line, which is the header
-    if (!read_csv_line(is, header, delimiter, newline)) {
+    if (!read_csv_line(is, header, delimiter)) {
       throw csvstream_exception("error reading header");
     }
   }
