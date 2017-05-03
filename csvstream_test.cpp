@@ -42,7 +42,7 @@ int main() {
   test_too_many_cols();
   test_no_newline_at_the_end();
   test_quotes();
-  // test_escape_quotes();
+  test_escape_quotes();
   test_multiline_quotes();
   test_osx_line_endings();
   test_windows_line_endings();
