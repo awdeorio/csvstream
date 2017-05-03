@@ -27,6 +27,8 @@ void test_no_newline_at_the_end();
 void test_quotes();
 void test_escape_quotes();
 void test_multiline_quotes();
+void test_osx_line_endings();
+void test_windows_line_endings();
 
 
 int main() {
@@ -42,6 +44,8 @@ int main() {
   test_quotes();
   // test_escape_quotes();
   test_multiline_quotes();
+  test_osx_line_endings();
+  test_windows_line_endings();
   cout << "csvstream_test PASSED\n";
   return 0;
 }
@@ -363,6 +367,74 @@ void test_multiline_quotes() {
 
   vector<map<string, string>> output_observed;
 
+  csvstream csvin(iss);
+  csvstream::row_type row;
+  try {
+    while (csvin >> row) {
+      output_observed.push_back(row);
+    }
+  } catch(csvstream_exception e) {
+    cout << e.msg << endl;
+    assert(0);
+  }
+
+  // Check output
+  assert(output_observed == output_correct);
+}
+
+
+void test_osx_line_endings() {
+  // Test with input data containing OSX line endings: \r
+
+  // Input
+  stringstream iss("a,b,c\r1,2,3\r,,\r");
+
+  // Correct answer
+  const vector<map<string, string>> output_correct =
+    {
+      {{"a","1"},{"b","2"},{"c","3"}},
+      {{"a",""},{"b",""},{"c",""}},
+    }
+  ;
+
+  // Save actual output
+  vector<map<string, string>> output_observed;
+
+  // Read stream
+  csvstream csvin(iss);
+  csvstream::row_type row;
+  try {
+    while (csvin >> row) {
+      output_observed.push_back(row);
+    }
+  } catch(csvstream_exception e) {
+    cout << e.msg << endl;
+    assert(0);
+  }
+
+  // Check output
+  assert(output_observed == output_correct);
+}
+
+
+void test_windows_line_endings() {
+  // Test with input data containing Windows line endings: \n\r
+
+  // Input
+  stringstream iss("a,b,c\n\r1,2,3\n\r,,\n\r");
+
+  // Correct answer
+  const vector<map<string, string>> output_correct =
+    {
+      {{"a","1"},{"b","2"},{"c","3"}},
+      {{"a",""},{"b",""},{"c",""}},
+    }
+  ;
+
+  // Save actual output
+  vector<map<string, string>> output_observed;
+
+  // Read stream
   csvstream csvin(iss);
   csvstream::row_type row;
   try {
