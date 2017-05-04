@@ -96,7 +96,7 @@ static bool read_csv_line(std::istream &is,
 
   // Process one character at a time
   char c = '\0';
-  enum State {BEGIN, QUOTED, UNQUOTED, END};
+  enum State {BEGIN, QUOTED, QUOTED_ESCAPED, UNQUOTED, UNQUOTED_ESCAPED, END};
   State state = BEGIN;
   while(is.get(c)) {
     switch (state) {
@@ -109,6 +109,9 @@ static bool read_csv_line(std::istream &is,
       if (c == '"') {
         // Change states when we see a double quote
         state = QUOTED;
+      } else if (c == '\\') { //note this checks for a single backslash char
+        state = UNQUOTED_ESCAPED;
+        data.back() += c;
       } else if (c == delimiter) {
         // If you see a delimiter, then start a new field with an empty string
         data.push_back("");
@@ -123,14 +126,39 @@ static bool read_csv_line(std::istream &is,
       }
       break;
 
+    case UNQUOTED_ESCAPED:
+      if (c == '"') {
+        // Replace the previous backslash with present double quote
+        data.back() = c;
+      } else {
+        // If c isn't a double quote, then just add the character
+        data.back() += c;
+      }
+      state = UNQUOTED;
+      break;
+
     case QUOTED:
       if (c == '"') {
         // Change states when we see a double quote
         state = UNQUOTED;
+      } else if (c == '\\') {
+        state = QUOTED_ESCAPED;
+        data.back() += c;
       } else {
         // Append character to current token
         data.back() += c;
       }
+      break;
+
+    case QUOTED_ESCAPED:
+      if (c == '"') {
+        // Replace the previous backslash with present double quote
+        data.back() = c;
+      } else {
+        // If c isn't a double quote, then just add the character
+        data.back() += c;
+      }
+      state = QUOTED;
       break;
 
     case END:

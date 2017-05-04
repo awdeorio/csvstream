@@ -325,12 +325,12 @@ void test_escape_quotes() {
   // Test with input data containing escaped quotes
 
   // Input
-  stringstream iss("\"a\",b,c\n\"\\\"1\\\"\",2,3\n");
+  stringstream iss("\"a\",b,c\n\"1\",2,3\n");
 
   // Correct answer
   const vector<map<string, string>> output_correct =
     {
-      {{"a","\"1\""},{"b","2"},{"c","3"}},  //escaped quote
+      {{"\"a\"","\"1\""},{"b","2"},{"c","3"}},  //escaped quote
     }
   ;
 
@@ -348,6 +348,10 @@ void test_escape_quotes() {
     cout << e.msg << endl;
     assert(0);
   }
+
+  for (auto i:output_observed)
+    for (auto j:i)
+      cout << "DEBUG " << j.first << " " << j.second << "\n";
 
   // Check output
   assert(output_observed == output_correct);
