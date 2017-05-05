@@ -42,7 +42,7 @@ int main() {
   test_too_many_cols();
   test_no_newline_at_the_end();
   test_quotes();
-  // test_escape_quotes();
+  test_escape_quotes();
   test_multiline_quotes();
   test_osx_line_endings();
   test_windows_line_endings();
@@ -325,12 +325,13 @@ void test_escape_quotes() {
   // Test with input data containing escaped quotes
 
   // Input
-  stringstream iss("\"a\",b,c\n\"\\\"1\\\"\",2,3\n");
+  stringstream iss("\\\"a\\\",b,c\n\\\"1\\\",2,3\n\"4,\\\"44\",5,6");
 
   // Correct answer
   const vector<map<string, string>> output_correct =
     {
-      {{"a","\"1\""},{"b","2"},{"c","3"}},  //escaped quote
+      {{"\\\"a\\\"","\\\"1\\\""},{"b","2"},{"c","3"}},  //escaped quote
+      {{"\\\"a\\\"","4,\\\"44"},{"b","5"},{"c","6"}},  //escaped quote
     }
   ;
 

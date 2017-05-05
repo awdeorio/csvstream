@@ -26,11 +26,6 @@ public:
 };
 
 
-// Read and tokenize one line from a stream
-static bool read_csv_line(std::istream &is,
-                          std::vector<std::string> &data,
-                          char delimiter=',');
-
 // csvstream interface
 class csvstream {
 public:
@@ -101,7 +96,7 @@ static bool read_csv_line(std::istream &is,
 
   // Process one character at a time
   char c = '\0';
-  enum State {BEGIN, QUOTED, UNQUOTED, END};
+  enum State {BEGIN, QUOTED, QUOTED_ESCAPED, UNQUOTED, UNQUOTED_ESCAPED, END};
   State state = BEGIN;
   while(is.get(c)) {
     switch (state) {
@@ -114,6 +109,9 @@ static bool read_csv_line(std::istream &is,
       if (c == '"') {
         // Change states when we see a double quote
         state = QUOTED;
+      } else if (c == '\\') { //note this checks for a single backslash char
+        state = UNQUOTED_ESCAPED;
+        data.back() += c;
       } else if (c == delimiter) {
         // If you see a delimiter, then start a new field with an empty string
         data.push_back("");
@@ -128,14 +126,29 @@ static bool read_csv_line(std::istream &is,
       }
       break;
 
+    case UNQUOTED_ESCAPED:
+      // If a character is escaped, add it no matter what.
+      data.back() += c;
+      state = UNQUOTED;
+      break;
+
     case QUOTED:
       if (c == '"') {
         // Change states when we see a double quote
         state = UNQUOTED;
+      } else if (c == '\\') {
+        state = QUOTED_ESCAPED;
+        data.back() += c;
       } else {
         // Append character to current token
         data.back() += c;
       }
+      break;
+
+    case QUOTED_ESCAPED:
+      // If a character is escaped, add it no matter what.
+      data.back() += c;
+      state = QUOTED;
       break;
 
     case END:

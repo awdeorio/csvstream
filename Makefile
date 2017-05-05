@@ -32,7 +32,7 @@ LD := $(CXX)
 # -O3                Optimization
 # -DNDEBUG           Disable assert statements (like #define NDEBUG)
 # -c                 Don't run linker
-CXXFLAGS := -std=c++11 -pedantic -Wall -Werror
+CXXFLAGS := -std=c++11 -pedantic -Wall -Wextra -Werror
 CXXFLAGS += -Wconversion -Wsign-conversion
 CXXFLAGS += -O3 -DNDEBUG
 CXXFLAGS += -c
@@ -48,7 +48,7 @@ VALGRIND ?= valgrind --leak-check=full
 
 # Your tests
 UNIT_TEST_SOURCES := $(wildcard *test*.cpp)
-SYSTEM_TEST_INPUT_FILES := $(wildcard *-train.csv)
+SYSTEM_TEST_INPUT_FILES := $(wildcard *.in)
 CUSTOM_TEST_SCRIPT_FILES := $(wildcard *test*.sh)
 
 
@@ -69,10 +69,10 @@ UNIT_TEST_NOLEAK_FILES := $(UNIT_TEST_SOURCES:%.cpp=%.noleak)
 UNIT_TEST := $(UNIT_TEST_PASSED_FILES)
 
 # List of system test input and output files
-SYSTEM_TEST_OUTPUT_FILES := $(SYSTEM_TEST_INPUT_FILES:%-train.csv=%.out)
-SYSTEM_TEST_PASSED_FILES := $(SYSTEM_TEST_INPUT_FILES:%-train.csv=%.passed)
-SYSTEM_TEST_VALGRIND_FILES := $(SYSTEM_TEST_INPUT_FILES:%-train.csv=%.valgrind.out)
-SYSTEM_TEST_NOLEAK_FILES := $(SYSTEM_TEST_INPUT_FILES:%-train.csv=%.noleak)
+SYSTEM_TEST_OUTPUT_FILES := $(SYSTEM_TEST_INPUT_FILES:%.in=%.out)
+SYSTEM_TEST_PASSED_FILES := $(SYSTEM_TEST_INPUT_FILES:%.in=%.passed)
+SYSTEM_TEST_VALGRIND_FILES := $(SYSTEM_TEST_INPUT_FILES:%.in=%.valgrind.out)
+SYSTEM_TEST_NOLEAK_FILES := $(SYSTEM_TEST_INPUT_FILES:%.in=%.noleak)
 SYSTEM_TEST := $(SYSTEM_TEST_PASSED_FILES)
 
 # System test passed files depend on system test output files
@@ -99,7 +99,10 @@ customtest : CXXFLAGS := $(filter-out -DNDEBUG, $(CXXFLAGS))
 customtest : $(CUSTOM_TEST)
 
 # Run regression test
-test : unittest systemtest customtest
+test :
+	$(MAKE) CXXFLAGS="$(filter-out -DNDEBUG, $(CXXFLAGS))" \
+    $(filter-out test unittest systemtest customtest, $(MAKECMDGOALS)) \
+    $(UNIT_TEST) $(SYSTEM_TEST) $(CUSTOM_TEST)
 
 # Run one custom test
 %.out %.passed : %.sh $(EXECUTABLE)
@@ -122,14 +125,6 @@ test : unittest systemtest customtest
 
 # Run one system test with valgrind and save output
 %.valgrind.out : %.in $(EXECUTABLE)
-	$(VALGRIND) ./$(EXECUTABLE) < $*.in > $*.valgrind.out 2>&1
-
-# Run one system test and save output
-%.out : %-train.csv %-test.csv $(EXECUTABLE)
-	./$(EXECUTABLE) $*-train.csv $*-test.csv > $*.out 2>&1
-
-# Run one system test with valgrind and save output
-%.valgrind.out.out : %-train %-test $(EXECUTABLE)
 	$(VALGRIND) ./$(EXECUTABLE) < $*.in > $*.valgrind.out 2>&1
 
 # Compare the output of one system test
@@ -234,7 +229,7 @@ run_gcov : $(GCOV_FILES)
 #
 # Best solution: Generate dependencies with "g++ -MM *.cpp", and copy-paste here
 # Binary_tree_test.o: Binary_tree_test.cpp Binary_tree.h
-# Map_test.o: Map_test.cpp Map.h Binary_tree.h
+# Set_test.o: Set_test.cpp Set.h Binary_tree.h
 # main.o: main.cpp
 #
 # HACK: we'll use a rule with more dependencies than we necessary.  All
@@ -250,7 +245,7 @@ $(ALL_OBJECTS) : $(ALL_HEADERS)
 # function.  This is usually a top-level program, and several unit tests. For
 # example:
 # Binary_tree_test: Binary_tree_test.o
-# Map_test: Map_test.o
+# Set_test: Set_test.o
 # main: main.o
 #
 # HACK: we'll use a rule with more dependencies than we necessary.  All
