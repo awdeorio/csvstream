@@ -127,13 +127,8 @@ static bool read_csv_line(std::istream &is,
       break;
 
     case UNQUOTED_ESCAPED:
-      if (c == '"') {
-        // Replace the previous backslash with present double quote
-        data.back() = c;
-      } else {
-        // If c isn't a double quote, then just add the character
-        data.back() += c;
-      }
+      // If a character is escaped, add it no matter what.
+      data.back() += c;
       state = UNQUOTED;
       break;
 
@@ -151,13 +146,8 @@ static bool read_csv_line(std::istream &is,
       break;
 
     case QUOTED_ESCAPED:
-      if (c == '"') {
-        // Replace the previous backslash with present double quote
-        data.back() = c;
-      } else {
-        // If c isn't a double quote, then just add the character
-        data.back() += c;
-      }
+      // If a character is escaped, add it no matter what.
+      data.back() += c;
       state = QUOTED;
       break;
 
