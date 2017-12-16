@@ -35,6 +35,9 @@ public:
   // A row is a map of (column name, datum) pairs from one row
   typedef std::map<std::string, std::string> row_type;
 
+  // A ordered row is a vector of column datum from one row
+  typedef std::vector<std::string> row_type_ord;
+
   // Constructor from filename
   csvstream(const std::string &filename, char delimiter=',');
 
@@ -50,8 +53,11 @@ public:
   // Return header processed by constructor
   header_type getheader() const;
 
-  // Stream extraction operator reads one row
+  // Stream extraction operator reads one row, keeping column names
   csvstream & operator>> (row_type& row);
+
+  // Stream extraction operator reads one row, keeping column order
+  csvstream & operator>> (row_type_ord& row);
 
 private:
   // Filename.  Used for error messages.
@@ -241,6 +247,28 @@ csvstream & csvstream::operator>> (row_type& row) {
   // combine data and header into a row object
   for (size_t i=0; i<data.size(); ++i) {
     row[header[i]] = data[i];
+  }
+
+  return *this;
+}
+
+
+csvstream & csvstream::operator>> (row_type_ord& row) {
+  // Clear input row
+  row.clear();
+
+  // Read one line from stream, bail out if we're at the end
+  if (!read_csv_line(is, row, delimiter)) return *this;
+  line_no += 1;
+
+  // Check length of data
+  if (row.size() != header.size()) {
+    auto msg = "Number of items in row does not match header. " +
+      filename + ":L" + std::to_string(line_no) + " " +
+      "header.size() = " + std::to_string(header.size()) + " " +
+      "row.size() = " + std::to_string(row.size()) + " "
+      ;
+    throw csvstream_exception(msg);
   }
 
   return *this;
