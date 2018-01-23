@@ -17,8 +17,9 @@ int main() {
   // Open file
   csvstream csvin("csvstream_example.csv");
 
-  // A row is a map<string, string>, key = column name, value = cell datum
-  csvstream::row_type_ord row;
+  // Alternative option for a row: vector<string>, values only, with no
+  // column names.
+  vector<string> row;
 
   // Read file
   while (csvin >> row) {

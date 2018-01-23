@@ -71,7 +71,7 @@ void test_filename_ctor() {
 
   // Read file
   csvstream csvin(input_filename_animals);
-  csvstream::row_type row;
+  map<string, string> row;
   while (csvin >> row) {
     output_observed.push_back(row);
   }
@@ -93,7 +93,7 @@ void test_stream_ctor() {
 
   // Read file from stream
   csvstream csvin(fin);
-  csvstream::row_type row;
+  map<string, string> row;
   while (csvin >> row) {
     output_observed.push_back(row);
   }
@@ -134,7 +134,7 @@ void test_emptyfields() {
 
   // Read stream
   csvstream csvin(iss);
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row) {
       output_observed.push_back(row);
@@ -168,7 +168,7 @@ void test_tsv() {
 
   // Read file
   csvstream csvin(iss, '\t');
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row) {
       output_observed.push_back(row);
@@ -194,7 +194,7 @@ void test_too_few_cols_in_the_middle() {
   csvstream csvin(iss);
 
   // Read file
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row); // throw away data
   } catch(csvstream_exception e) {
@@ -217,7 +217,7 @@ void test_too_few_cols_at_the_end() {
   csvstream csvin(iss);
 
   // Read file
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row); // throw away data
   } catch(csvstream_exception e) {
@@ -240,7 +240,7 @@ void test_too_many_cols() {
   csvstream csvin(iss);
 
   // Read file
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row); // throw away data
   } catch(csvstream_exception e) {
@@ -273,7 +273,7 @@ void test_no_newline_at_the_end() {
   vector<map<string, string>> output_observed;
 
   // Read stream
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row) {
       output_observed.push_back(row);
@@ -306,7 +306,7 @@ void test_quotes() {
 
   // Read stream
   csvstream csvin(iss);
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row) {
       output_observed.push_back(row);
@@ -340,7 +340,7 @@ void test_escape_quotes() {
 
   // Read stream
   csvstream csvin(iss);
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row) {
       output_observed.push_back(row);
@@ -369,7 +369,7 @@ void test_multiline_quotes() {
   vector<map<string, string>> output_observed;
 
   csvstream csvin(iss);
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row) {
       output_observed.push_back(row);
@@ -403,7 +403,7 @@ void test_osx_line_endings() {
 
   // Read stream
   csvstream csvin(iss);
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row) {
       output_observed.push_back(row);
@@ -437,7 +437,7 @@ void test_windows_line_endings() {
 
   // Read stream
   csvstream csvin(iss);
-  csvstream::row_type row;
+  map<string, string> row;
   try {
     while (csvin >> row) {
       output_observed.push_back(row);

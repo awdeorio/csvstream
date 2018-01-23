@@ -6,10 +6,10 @@ Andrew DeOrio <awdeorio@umich.edu><br>
 http://andrewdeorio.com
 
 ## Quick start
-```
-git clone https://github.com/awdeorio/csvstream.git
-cd csvstream/
-make test
+```console
+$ git clone https://github.com/awdeorio/csvstream.git
+$ cd csvstream/
+$ make test
 ```
 
 ## Example 1
@@ -40,7 +40,7 @@ int main() {
 ```
 
 Input
-```
+```console
 $ cat csvstream_example.csv
 name,animal
 Fergie,horse
@@ -49,14 +49,14 @@ Oscar,cat
 ```
 
 Compile
-```
+```console
 $ make csvstream_example1
   # OR
 $ g++ -std=c++11 csvstream_example1.cpp -o csvstream_example1
 ```
 
 Output
-```
+```console
 $ ./csvstream_example1
 horse
 chicken
@@ -81,7 +81,7 @@ int main() {
   csvstream csvin("csvstream_example.csv");
 
   // A row is a map<string, string>, key = column name, value = datum
-  csvstream::row_type row;
+  map<string, string> row;
 
   // Read file
   while (csvin >> row) {
@@ -97,7 +97,7 @@ int main() {
 ```
 
 Input
-```
+```console
 $ cat csvstream_example.csv
 name,animal
 Fergie,horse
@@ -106,14 +106,14 @@ Oscar,cat
 ```
 
 Compile
-```
+```console
 $ make csvstream_example2
   # OR
 $ g++ -std=c++11 csvstream_example2.cpp -o csvstream_example2
 ```
 
 Output
-```
+```console
 $ ./csvstream_example2
 row:
   animal: horse
