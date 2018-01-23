@@ -17,17 +17,18 @@ int main() {
   // Open file
   csvstream csvin("csvstream_example.csv");
 
-  // Alternative option for a row: vector<string>, values only, with no
-  // column names.
-  vector<string> row;
+  // A row is a vector<pair<string, string>>
+  // key = column name, value = cell datum
+  map<string, string> row;
 
   // Read file
   while (csvin >> row) {
-    cout << "row:";
+    cout << "row:" << "\n";
     for (auto col:row) {
-      string datum = col;
-      cout  << '\t' << datum;
+      string column_name = col.first;
+      string datum = col.second;
+      cout << "  " << column_name << ": " << datum << "\n";
     }
-    cout << endl;
   }
+
 }
