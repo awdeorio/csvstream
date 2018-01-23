@@ -30,12 +30,6 @@ public:
 // csvstream interface
 class csvstream {
 public:
-  // A header is a vector of column names, in order
-  typedef std::vector<std::string> header_type;
-
-  // A row is a map of (column name, datum) pairs from one row
-  typedef std::map<std::string, std::string> row_type;
-
   // Constructor from filename
   csvstream(const std::string &filename, char delimiter=',');
 
@@ -49,10 +43,10 @@ public:
   explicit operator bool() const;
 
   // Return header processed by constructor
-  header_type getheader() const;
+  std::vector<std::string> getheader() const;
 
   // Stream extraction operator reads one row
-  csvstream & operator>> (row_type& row);
+  csvstream & operator>> (std::map<std::string, std::string>& row);
 
 private:
   // Filename.  Used for error messages.
@@ -71,7 +65,7 @@ private:
   size_t line_no;
 
   // Store header column names
-  header_type header;
+  std::vector<std::string> header;
 
   // Process header, the first line of the file
   void read_header();
@@ -215,12 +209,12 @@ csvstream::operator bool() const {
 }
 
 
-csvstream::header_type csvstream::getheader() const {
+std::vector<std::string> csvstream::getheader() const {
   return header;
 }
 
 
-csvstream & csvstream::operator>> (row_type& row) {
+csvstream & csvstream::operator>> (std::map<std::string, std::string>& row) {
   // Clear input row
   row.clear();
 
