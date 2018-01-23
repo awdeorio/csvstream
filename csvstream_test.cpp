@@ -450,3 +450,37 @@ void test_windows_line_endings() {
   // Check output
   assert(output_observed == output_correct);
 }
+
+
+void test_ordered() {
+  // Test ordered stream extraction operator.  Store data in a vector instead
+  // of a map.
+
+  // Input
+  stringstream iss("b,a,c\n2,1,3\n");
+
+  // Correct answer
+  const vector<vector<pair<string, string>>> output_correct =
+    {
+      {{"b","2"},{"a","1"},{"c","3"}},
+    }
+  ;
+
+  // Save actual output
+  vector<vector<pair<string, string>>> output_observed;
+
+  // Read stream
+  csvstream csvin(iss);
+  vector<pair<string, string>> row;
+  try {
+    while (csvin >> row) {
+      output_observed.push_back(row);
+    }
+  } catch(csvstream_exception e) {
+    cout << e.msg << endl;
+    assert(0);
+  }
+
+  // Check output
+  assert(output_observed == output_correct);
+}

@@ -48,6 +48,9 @@ public:
   // Stream extraction operator reads one row
   csvstream & operator>> (std::map<std::string, std::string>& row);
 
+  // Stream extraction operator reads one row, keeping column order
+  csvstream & operator>> (std::vector<std::pair<std::string, std::string> >& row);
+
 private:
   // Filename.  Used for error messages.
   std::string filename;
@@ -236,6 +239,35 @@ csvstream & csvstream::operator>> (std::map<std::string, std::string>& row) {
   // combine data and header into a row object
   for (size_t i=0; i<data.size(); ++i) {
     row[header[i]] = data[i];
+  }
+
+  return *this;
+}
+
+
+csvstream & csvstream::operator>> (std::vector<std::pair<std::string, std::string> >& row) {
+  // Clear input row
+  row.clear();
+  row.resize(header.size());
+
+  // Read one line from stream, bail out if we're at the end
+  std::vector<std::string> data;
+  if (!read_csv_line(is, data, delimiter)) return *this;
+  line_no += 1;
+
+  // Check length of data
+  if (row.size() != header.size()) {
+    auto msg = "Number of items in row does not match header. " +
+      filename + ":L" + std::to_string(line_no) + " " +
+      "header.size() = " + std::to_string(header.size()) + " " +
+      "row.size() = " + std::to_string(row.size()) + " "
+      ;
+    throw csvstream_exception(msg);
+  }
+
+  // combine data and header into a row object
+  for (size_t i=0; i<data.size(); ++i) {
+    row[i] = make_pair(header[i], data[i]);
   }
 
   return *this;
