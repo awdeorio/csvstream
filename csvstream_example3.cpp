@@ -1,4 +1,4 @@
-/* csvstream_example.cpp
+/* csvstream_example3.cpp
  *
  * Andrew DeOrio <awdeorio@umich.edu>
  *
@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <utility>
 using namespace std;
 
 
@@ -19,7 +20,7 @@ int main() {
 
   // A row is a vector<pair<string, string>>
   // key = column name, value = cell datum
-  map<string, string> row;
+  vector<pair<string, string>> row;
 
   // Read file
   while (csvin >> row) {
