@@ -87,8 +87,8 @@ int main() {
   while (csvin >> row) {
     cout << "row:" << "\n";
     for (auto &col:row) {
-      string column_name = col.first;
-      string datum = col.second;
+      const string &column_name = col.first;
+      const string &datum = col.second;
       cout << "  " << column_name << ": " << datum << "\n";
     }
   }
@@ -159,8 +159,8 @@ int main() {
   while (csvin >> row) {
     cout << "row:" << "\n";
     for (auto &col:row) {
-      string column_name = col.first;
-      string datum = col.second;
+      const string &column_name = col.first;
+      const string &datum = col.second;
       cout << "  " << column_name << ": " << datum << "\n";
     }
   }
