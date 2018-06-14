@@ -23,7 +23,7 @@ int main() {
   // Read file
   while (csvin >> row) {
     cout << "row:" << "\n";
-    for (auto col:row) {
+    for (auto &col:row) {
       string column_name = col.first;
       string datum = col.second;
       cout << "  " << column_name << ": " << datum << "\n";
