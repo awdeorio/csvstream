@@ -140,7 +140,7 @@ void test_emptyfields() {
       output_observed.push_back(row);
     }
   } catch(csvstream_exception e) {
-    cout << e.msg << endl;
+    cout << e.what() << endl;
     assert(0);
   }
 
@@ -174,7 +174,7 @@ void test_tsv() {
       output_observed.push_back(row);
     }
   } catch(csvstream_exception e) {
-    cout << e.msg << endl;
+    cout << e.what() << endl;
     assert(0);
   }
 
@@ -279,7 +279,7 @@ void test_no_newline_at_the_end() {
       output_observed.push_back(row);
     }
   } catch(csvstream_exception e) {
-    cout << e.msg << endl;
+    cout << e.what() << endl;
     assert(0);
   }
 
@@ -312,7 +312,7 @@ void test_quotes() {
       output_observed.push_back(row);
     }
   } catch(csvstream_exception e) {
-    cout << e.msg << endl;
+    cout << e.what() << endl;
     assert(0);
   }
 
@@ -346,7 +346,7 @@ void test_escape_quotes() {
       output_observed.push_back(row);
     }
   } catch(csvstream_exception e) {
-    cout << e.msg << endl;
+    cout << e.what() << endl;
     assert(0);
   }
 
@@ -375,7 +375,7 @@ void test_multiline_quotes() {
       output_observed.push_back(row);
     }
   } catch(csvstream_exception e) {
-    cout << e.msg << endl;
+    cout << e.what() << endl;
     assert(0);
   }
 
@@ -409,7 +409,7 @@ void test_osx_line_endings() {
       output_observed.push_back(row);
     }
   } catch(csvstream_exception e) {
-    cout << e.msg << endl;
+    cout << e.what() << endl;
     assert(0);
   }
 
@@ -443,7 +443,7 @@ void test_windows_line_endings() {
       output_observed.push_back(row);
     }
   } catch(csvstream_exception e) {
-    cout << e.msg << endl;
+    cout << e.what() << endl;
     assert(0);
   }
 
@@ -477,7 +477,7 @@ void test_ordered() {
       output_observed.push_back(row);
     }
   } catch(csvstream_exception e) {
-    cout << e.msg << endl;
+    cout << e.what() << endl;
     assert(0);
   }
 
