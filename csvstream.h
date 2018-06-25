@@ -28,7 +28,6 @@ public:
   }
   const std::string msg;
   csvstream_exception(const std::string &msg) : msg(msg) {};
-  ~csvstream_exception() throw () {}
 };
 
 
