@@ -25,9 +25,9 @@ int main() {
   // Read file
   while (csvin >> row) {
     cout << "row:" << "\n";
-    for (auto &col:row) {
-      const string &column_name = col.first;
-      const string &datum = col.second;
+    for (unsigned int i=0; i < row.size(); ++i) {
+      const string &column_name = row[i].first;
+      const string &datum = row[i].second;
       cout << "  " << column_name << ": " << datum << "\n";
     }
   }
