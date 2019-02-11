@@ -35,10 +35,10 @@ public:
 class csvstream {
 public:
   // Constructor from filename
-  csvstream(const std::string &filename, char delimiter=',');
+  csvstream(const std::string &filename, char delimiter=',', bool strict=true);
 
   // Constructor from stream
-  csvstream(std::istream &is, char delimiter=',');
+  csvstream(std::istream &is, char delimiter=',', bool strict=true);
 
   // Destructor
   ~csvstream();
@@ -67,6 +67,9 @@ private:
 
   // Delimiter between columns
   char delimiter;
+
+  // Strict mode. If false all reading errors are ignored
+  bool strict;
 
   // Line no in file.  Used for error messages
   size_t line_no;
@@ -186,9 +189,9 @@ static bool read_csv_line(std::istream &is,
 }
 
 
-csvstream::csvstream(const std::string &filename, char delimiter)
+csvstream::csvstream(const std::string &filename, char delimiter, bool strict)
 : filename(filename), is(fin),
-  delimiter(delimiter), line_no(0) {
+  delimiter(delimiter), strict(strict), line_no(0) {
 
   // Open file
   fin.open(filename.c_str());
@@ -201,8 +204,9 @@ csvstream::csvstream(const std::string &filename, char delimiter)
 }
 
 
-csvstream::csvstream(std::istream &is, char delimiter)
-: filename("[no filename]"), is(is), delimiter(delimiter), line_no(0) {
+csvstream::csvstream(std::istream &is, char delimiter, bool strict)
+: filename("[no filename]"), is(is),
+  delimiter(delimiter), strict(strict), line_no(0) {
   read_header();
 }
 
@@ -232,7 +236,7 @@ csvstream & csvstream::operator>> (std::map<std::string, std::string>& row) {
   line_no += 1;
 
   // Check length of data
-  if (data.size() != header.size()) {
+  if (strict && data.size() != header.size()) {
     auto msg = "Number of items in row does not match header. " +
       filename + ":L" + std::to_string(line_no) + " " +
       "header.size() = " + std::to_string(header.size()) + " " +
@@ -242,7 +246,8 @@ csvstream & csvstream::operator>> (std::map<std::string, std::string>& row) {
   }
 
   // combine data and header into a row object
-  for (size_t i=0; i<data.size(); ++i) {
+  auto size = strict ? data.size() : std::min(data.size(), header.size());
+  for (size_t i=0; i<size; ++i) {
     row[header[i]] = data[i];
   }
 
@@ -261,7 +266,7 @@ csvstream & csvstream::operator>> (std::vector<std::pair<std::string, std::strin
   line_no += 1;
 
   // Check length of data
-  if (row.size() != header.size()) {
+  if (strict && row.size() != header.size()) {
     auto msg = "Number of items in row does not match header. " +
       filename + ":L" + std::to_string(line_no) + " " +
       "header.size() = " + std::to_string(header.size()) + " " +
@@ -271,7 +276,8 @@ csvstream & csvstream::operator>> (std::vector<std::pair<std::string, std::strin
   }
 
   // combine data and header into a row object
-  for (size_t i=0; i<data.size(); ++i) {
+  auto size = strict ? data.size() : std::min(data.size(), header.size());
+  for (size_t i=0; i<size; ++i) {
     row[i] = make_pair(header[i], data[i]);
   }
 

@@ -20,15 +20,17 @@ void test_stream_ctor();
 void test_getheader();
 void test_emptyfields();
 void test_tsv();
-void test_too_few_cols_in_the_middle();
-void test_too_few_cols_at_the_end();
-void test_too_many_cols();
+void test_too_few_cols_in_the_middle(bool strict);
+void test_too_few_cols_at_the_end(bool strict);
+void test_too_many_cols(bool strict);
 void test_no_newline_at_the_end();
 void test_quotes();
 void test_escape_quotes();
 void test_multiline_quotes();
 void test_osx_line_endings();
 void test_windows_line_endings();
+void test_strict_notsctrict();
+void test_notstrict_exceptions();
 
 
 int main() {
@@ -37,15 +39,19 @@ int main() {
   test_getheader();
   test_emptyfields();
   test_tsv();
-  test_too_few_cols_in_the_middle();
-  test_too_few_cols_at_the_end();
-  test_too_many_cols();
+  for (auto strict : { false, true }) {
+    test_too_few_cols_in_the_middle(strict);
+    test_too_few_cols_at_the_end(strict);
+    test_too_many_cols(strict);
+  }
   test_no_newline_at_the_end();
   test_quotes();
   test_escape_quotes();
   test_multiline_quotes();
   test_osx_line_endings();
   test_windows_line_endings();
+  test_strict_notsctrict();
+  test_notstrict_exceptions();
   cout << "csvstream_test PASSED\n";
   return 0;
 }
@@ -183,7 +189,7 @@ void test_tsv() {
 }
 
 
-void test_too_few_cols_in_the_middle() {
+void test_too_few_cols_in_the_middle(bool strict) {
   // Test error condition: a row in the middle of the file that doesn't have
   // enough fields
 
@@ -191,65 +197,71 @@ void test_too_few_cols_in_the_middle() {
   stringstream iss("a,b,c\n,\nd,e,f");
 
   // Create object
-  csvstream csvin(iss);
+  csvstream csvin(iss, ',', strict);
 
   // Read file
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
   } catch(csvstream_exception e) {
-    //if we caught an exception, then it worked
-    return;
+    // exception must be caught for strict mode
+    if (strict) return;
+    cout << e.what() << endl;
+    assert(0);
   }
 
-  // if we made it this far, then it didn't work
-  assert(0);
+  // if exception wasn't caught for strict mode, then it didn't work
+  if (strict) assert(0);
 }
 
 
-void test_too_few_cols_at_the_end() {
+void test_too_few_cols_at_the_end(bool strict) {
   // Test error condition: last row doesn't have enough fields
 
   // Input
   stringstream iss("a,b,c\n,");
 
   // Create object
-  csvstream csvin(iss);
+  csvstream csvin(iss, ',', strict);
 
   // Read file
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
   } catch(csvstream_exception e) {
-    //if we caught an exception, then it worked
-    return;
+    // exception must be caught for strict mode
+    if (strict) return;
+    cout << e.what() << endl;
+    assert(0);
   }
 
-  // if we made it this far, then it didn't work
-  assert(0);
+    // if exception wasn't caught for strict mode, then it didn't work
+  if (strict) assert(0);
 }
 
 
-void test_too_many_cols() {
+void test_too_many_cols(bool strict) {
   // Test error condition: row with too many fields
 
   // Input
   stringstream iss("a,b,c\n,,,");
 
   // Create object
-  csvstream csvin(iss);
+  csvstream csvin(iss, ',', strict);
 
   // Read file
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
   } catch(csvstream_exception e) {
-    //if we caught an exception, then it worked
-    return;
+    // exception must be caught for strict mode
+    if (strict) return;
+    cout << e.what() << endl;
+    assert(0);
   }
 
-  // if we made it this far, then it didn't work
-  assert(0);
+  // if exception wasn't caught for strict mode, then it didn't work
+  if (strict) assert(0);
 }
 
 
@@ -483,4 +495,70 @@ void test_ordered() {
 
   // Check output
   assert(output_observed == output_correct);
+}
+
+
+void test_strict_notsctrict() {
+  // Test with same input for strict and not strict modes.
+
+  // Correct answer
+  const vector<vector<pair<string, string>>> output_correct =
+    {
+      {{"a","1"},{"b","2"},{"c","3"}},
+      {{"a","4"},{"b","5"},{"c","6"}},
+    }
+  ;
+  for (auto strict : { false, true }) {
+    // Input
+    stringstream iss("a,b,c\n1,2,3\n4,5,6");
+
+    // Save actual output
+    vector<vector<pair<string, string>>> output_observed;
+
+    // Read stream
+    csvstream csvin(iss, ',', strict);
+    vector<pair<string, string>> row;
+    try {
+      while (csvin >> row) {
+        output_observed.push_back(row);
+      }
+    } catch(csvstream_exception e) {
+      cout << e.what() << endl;
+      assert(0);
+    }
+
+    // Check output
+    assert(output_observed == output_correct);
+  }
+}
+
+
+void test_notstrict_exceptions() {
+  // Test for exceptions in not strict mode.
+
+  // Invalid input strings
+  vector<string> input_strings = {
+      "\"a,b,c\n1,2,3", // no closing bracket
+      ",,,\n1,2,3", // empty headers
+      "\n\n\n\n" // string with endings only
+      "a,b\n1,2,3\n1", // lines have different size
+      "a,b,c\n,,,,,\n,,\n,\n\n", // empty values
+    }
+  ;
+
+  for (auto &input_string : input_strings) {
+    // Input
+    stringstream iss(input_string);
+
+    // Read stream
+    csvstream csvin(iss, ',', false);
+    vector<pair<string, string>> row;
+    try {
+      while (csvin >> row);
+    } catch(csvstream_exception e) {
+      cout << e.what() << endl;
+      // If exception was caught, it didn't work
+      assert(0);
+    }
+  }
 }
