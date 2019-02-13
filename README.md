@@ -167,3 +167,17 @@ int main() {
 
 }
 ```
+
+
+## Constructor options
+The constructor accepts several optional arguments.
+
+Change the delimiter between values on a row.  Default=`','`.
+```c++
+csvstream csvin("csvstream_example.csv", delimiter='|');
+```
+
+Disable strict mode.  When `strict=true`, raise an exception if a row contains too many values or too few compared to the header.  When `strict=false`, ignore extra values and set missing values to empty string.
+```c++
+csvstream csvin("csvstream_example.csv", delimiter=',', strict=false);
+```

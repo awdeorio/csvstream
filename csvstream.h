@@ -35,10 +35,10 @@ public:
 class csvstream {
 public:
   // Constructor from filename
-  csvstream(const std::string &filename, char delimiter=',');
+  csvstream(const std::string &filename, char delimiter=',', bool strict=true);
 
   // Constructor from stream
-  csvstream(std::istream &is, char delimiter=',');
+  csvstream(std::istream &is, char delimiter=',', bool strict=true);
 
   // Destructor
   ~csvstream();
@@ -67,6 +67,11 @@ private:
 
   // Delimiter between columns
   char delimiter;
+
+  // Strictly enforce the number of values in each row.  Raise an exception if
+  // a row contains too many values or too few compared to the header.  When
+  // strict=false, ignore extra values and set missing values to empty string.
+  bool strict;
 
   // Line no in file.  Used for error messages
   size_t line_no;
@@ -104,7 +109,7 @@ static bool read_csv_line(std::istream &is,
     switch (state) {
     case BEGIN:
       // We need this state transition to properly handle cases where nothing
-      // is extracted.
+      // is extracted.  Note the intended switch fallthrough.
       state = UNQUOTED;
 
     case UNQUOTED:
@@ -185,9 +190,12 @@ static bool read_csv_line(std::istream &is,
 }
 
 
-csvstream::csvstream(const std::string &filename, char delimiter)
-: filename(filename), is(fin),
-  delimiter(delimiter), line_no(0) {
+csvstream::csvstream(const std::string &filename, char delimiter, bool strict)
+  : filename(filename),
+    is(fin),
+    delimiter(delimiter),
+    strict(strict),
+    line_no(0) {
 
   // Open file
   fin.open(filename.c_str());
@@ -200,8 +208,12 @@ csvstream::csvstream(const std::string &filename, char delimiter)
 }
 
 
-csvstream::csvstream(std::istream &is, char delimiter)
-: filename("[no filename]"), is(is), delimiter(delimiter), line_no(0) {
+csvstream::csvstream(std::istream &is, char delimiter, bool strict)
+  : filename("[no filename]"),
+    is(is),
+    delimiter(delimiter),
+    strict(strict),
+    line_no(0) {
   read_header();
 }
 
@@ -229,6 +241,13 @@ csvstream & csvstream::operator>> (std::map<std::string, std::string>& row) {
   std::vector<std::string> data;
   if (!read_csv_line(is, data, delimiter)) return *this;
   line_no += 1;
+
+  // When strict mode is disabled, coerce the length of the data.  If data is
+  // larger than header, discard extra values.  If data is smaller than header,
+  // pad data with empty strings.
+  if (!strict) {
+    data.resize(header.size());
+  }
 
   // Check length of data
   if (data.size() != header.size()) {
@@ -258,6 +277,13 @@ csvstream & csvstream::operator>> (std::vector<std::pair<std::string, std::strin
   std::vector<std::string> data;
   if (!read_csv_line(is, data, delimiter)) return *this;
   line_no += 1;
+
+  // When strict mode is disabled, coerce the length of the data.  If data is
+  // larger than header, discard extra values.  If data is smaller than header,
+  // pad data with empty strings.
+  if (!strict) {
+    data.resize(header.size());
+  }
 
   // Check length of data
   if (row.size() != header.size()) {
