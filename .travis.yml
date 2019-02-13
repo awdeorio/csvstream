@@ -61,22 +61,29 @@ matrix:
       compiler: clang
       addons:
         apt:
-          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6
-          packages: clang-3.6
-      env: MATRIX_EVAL="CXX=clang++-3.6"
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
           sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-4
-          packages: clang-3.6
+          packages: clang-4
       env: MATRIX_EVAL="CXX=clang++-4"
     - os: linux
       compiler: clang
       addons:
         apt:
           sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-5
-          packages: clang-3.6
+          packages: clang-5
       env: MATRIX_EVAL="CXX=clang++-5"
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-6
+          packages: clang-6
+      env: MATRIX_EVAL="CXX=clang++-6"
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-7
+          packages: clang-7
+      env: MATRIX_EVAL="CXX=clang++-7"
 before_install:
     - eval "${MATRIX_EVAL}"
