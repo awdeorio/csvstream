@@ -82,8 +82,11 @@ matrix:
       compiler: clang
       addons:
         apt:
-          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-7
-          packages: clang-7
-      env: MATRIX_EVAL="CXX=clang++-7"
+          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-7.0
+          packages: clang-7.0
+      env: MATRIX_EVAL="CXX=clang++-7.0"
+    - os: osx
+      osx_image: xcode8
+      env: MATRIX_EVAL="CXX=clang++"
 before_install:
     - eval "${MATRIX_EVAL}"
