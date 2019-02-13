@@ -109,9 +109,8 @@ static bool read_csv_line(std::istream &is,
     switch (state) {
     case BEGIN:
       // We need this state transition to properly handle cases where nothing
-      // is extracted.
+      // is extracted.  Note the intended switch fallthrough.
       state = UNQUOTED;
-      __attribute__((fallthrough));
 
     case UNQUOTED:
       if (c == '"') {
