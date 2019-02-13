@@ -5,6 +5,7 @@
 
 # Test
 script:
+ - ${CXX} --version
  - make -j4 && make test
 
 # Always test the master branch, even when there's no pull request
