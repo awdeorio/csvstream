@@ -20,9 +20,12 @@ void test_stream_ctor();
 void test_getheader();
 void test_emptyfields();
 void test_tsv();
-void test_too_few_cols_in_the_middle(bool strict);
-void test_too_few_cols_at_the_end(bool strict);
-void test_too_many_cols(bool strict);
+void test_too_few_cols_in_the_middle_strict();
+void test_too_few_cols_in_the_middle_notstrict();
+void test_too_few_cols_at_the_end_strict();
+void test_too_few_cols_at_the_end_notstrict();
+void test_too_many_cols_strict();
+void test_too_many_cols_notstrict();
 void test_no_newline_at_the_end();
 void test_quotes();
 void test_escape_quotes();
@@ -39,11 +42,12 @@ int main() {
   test_getheader();
   test_emptyfields();
   test_tsv();
-  for (auto strict : { false, true }) {
-    test_too_few_cols_in_the_middle(strict);
-    test_too_few_cols_at_the_end(strict);
-    test_too_many_cols(strict);
-  }
+  test_too_few_cols_in_the_middle_strict();
+  test_too_few_cols_in_the_middle_notstrict();
+  test_too_few_cols_at_the_end_strict();
+  test_too_few_cols_at_the_end_notstrict();
+  test_too_many_cols_strict();
+  test_too_many_cols_notstrict();
   test_no_newline_at_the_end();
   test_quotes();
   test_escape_quotes();
@@ -189,7 +193,7 @@ void test_tsv() {
 }
 
 
-void test_too_few_cols_in_the_middle(bool strict) {
+void test_too_few_cols_in_the_middle_strict() {
   // Test error condition: a row in the middle of the file that doesn't have
   // enough fields
 
@@ -197,71 +201,130 @@ void test_too_few_cols_in_the_middle(bool strict) {
   stringstream iss("a,b,c\n,\nd,e,f");
 
   // Create object
-  csvstream csvin(iss, ',', strict);
+  csvstream csvin(iss);
 
   // Read file
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
   } catch(csvstream_exception e) {
-    // exception must be caught for strict mode
-    if (strict) return;
-    cout << e.what() << endl;
-    assert(0);
+    //if we caught an exception, then it worked
+    return;
   }
 
-  // if exception wasn't caught for strict mode, then it didn't work
-  if (strict) assert(0);
+  // if we made it this far, then it didn't work
+  assert(0);
 }
 
 
-void test_too_few_cols_at_the_end(bool strict) {
+void test_too_few_cols_in_the_middle_notstrict() {
+  // Test error condition: a row in the middle of the file that doesn't have
+  // enough fields.  When strict=false, this should *not* cause an error.
+
+  // Input
+  stringstream iss("a,b,c\n,\nd,e,f");
+
+  // Create object with strict=false
+  csvstream csvin(iss, ',', false);
+
+  // Read file
+  map<string, string> row;
+  try {
+    while (csvin >> row); // throw away data
+  } catch(csvstream_exception e) {
+    // If we caught an exception, then strict=false failed to coerce the number
+    // of values.
+    assert(0);
+  }
+}
+
+
+void test_too_few_cols_at_the_end_strict() {
   // Test error condition: last row doesn't have enough fields
 
   // Input
   stringstream iss("a,b,c\n,");
 
   // Create object
-  csvstream csvin(iss, ',', strict);
+  csvstream csvin(iss);
 
   // Read file
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
   } catch(csvstream_exception e) {
-    // exception must be caught for strict mode
-    if (strict) return;
-    cout << e.what() << endl;
-    assert(0);
+    //if we caught an exception, then it worked
+    return;
   }
 
-    // if exception wasn't caught for strict mode, then it didn't work
-  if (strict) assert(0);
+  // if we made it this far, then it didn't work
+  assert(0);
 }
 
 
-void test_too_many_cols(bool strict) {
+void test_too_few_cols_at_the_end_notstrict() {
+  // Test error condition: last row doesn't have enough fields
+
+  // Input
+  stringstream iss("a,b,c\n,");
+
+  // Create object with strict=false
+  csvstream csvin(iss, ',', false);
+
+  // Read file
+  map<string, string> row;
+  try {
+    while (csvin >> row); // throw away data
+  } catch(csvstream_exception e) {
+    // If we caught an exception, then strict=false failed to coerce the number
+    // of values.
+    assert(0);
+  }
+}
+
+
+void test_too_many_cols_strict() {
   // Test error condition: row with too many fields
 
   // Input
   stringstream iss("a,b,c\n,,,");
 
   // Create object
-  csvstream csvin(iss, ',', strict);
+  csvstream csvin(iss);
 
   // Read file
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
   } catch(csvstream_exception e) {
-    // exception must be caught for strict mode
-    if (strict) return;
-    cout << e.what() << endl;
-    assert(0);
+    //if we caught an exception, then it worked
+    return;
   }
 
-  // if exception wasn't caught for strict mode, then it didn't work
-  if (strict) assert(0);
+  // if we made it this far, then it didn't work
+  assert(0);
+}
+
+
+void test_too_many_cols_notstrict() {
+  // Test error condition: row with too many fields.  When strict=false,
+  // this should *not* cause an error.
+
+  // Input
+  stringstream iss("a,b,c\n,,,");
+
+  // Create object, with strict=false
+  csvstream csvin(iss, ',', false);
+
+  // Read file
+  map<string, string> row;
+  try {
+    while (csvin >> row); // throw away data
+  } catch(csvstream_exception e) {
+    // If we caught an exception, then strict=false failed to coerce the number
+    // of values.
+    assert(0);
+  }
 }
 
 
