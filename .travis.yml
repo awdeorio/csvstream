@@ -2,6 +2,10 @@
 #
 # https://docs.travis-ci.com/
 # https://docs.travis-ci.com/user/languages/cpp/
+#
+# Example with multiple compiler versions, including both GCC and Clang
+# https://github.com/facebook/fatal/blob/dev/.travis.yml
+
 
 # Test
 script:
@@ -14,7 +18,6 @@ branches:
     - master
 
 # Test against multiple compiler versions
-# Based on https://github.com/facebook/fatal/blob/dev/.travis.yml
 language: cpp
 matrix:
   include:
@@ -25,7 +28,6 @@ matrix:
           sources: ubuntu-toolchain-r-test
           packages: g++-4.9
       env: MATRIX_EVAL="CXX=g++-4.9"
-
     - os: linux
       compiler: gcc
       addons:
@@ -33,7 +35,6 @@ matrix:
           sources: ubuntu-toolchain-r-test
           packages: g++-5
       env: MATRIX_EVAL="CXX=g++-5"
-
     - os: linux
       compiler: gcc
       addons:
@@ -41,7 +42,6 @@ matrix:
           sources: ubuntu-toolchain-r-test
           packages: g++-6
       env: MATRIX_EVAL="CXX=g++-6"
-
     # Currently fails, issue https://github.com/awdeorio/csvstream/issues/22
     #
     # - os: linux
@@ -51,11 +51,9 @@ matrix:
     #       sources: ubuntu-toolchain-r-test
     #       packages: g++-7
     #   env: MATRIX_EVAL="CXX=g++-7"
-
     - os: linux
       compiler: clang
       env: MATRIX_EVAL="CXX=clang++"
-
     - os: linux
       compiler: clang
       addons:
@@ -63,7 +61,6 @@ matrix:
           sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-3.5
           packages: clang-3.5
       env: MATRIX_EVAL="CXX=clang++-3.5"
-
     - os: linux
       compiler: clang
       addons:
@@ -71,6 +68,5 @@ matrix:
           sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6
           packages: clang-3.6
       env: MATRIX_EVAL="CXX=clang++-3.6"
-
 before_install:
     - eval "${MATRIX_EVAL}"
