@@ -74,7 +74,7 @@ matrix:
       osx_image: xcode9.2
       compiler: clang
 
-    - name: "macOS 10.13 Apple LLVM version 10.0.0 "
+    - name: "macOS 10.13 Apple LLVM version 10.0.0"
       os: osx
       osx_image: xcode10.1
       compiler: clang
