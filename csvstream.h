@@ -68,7 +68,9 @@ private:
   // Delimiter between columns
   char delimiter;
 
-  // Strict mode. If false all reading errors are ignored
+  // Strictly enforce the number of values in each row.  Raise an exception if
+  // a row contains too many values or too few compared to the header.  When
+  // strict=false, ignore extra values and set missing values to empty string.
   bool strict;
 
   // Line no in file.  Used for error messages
