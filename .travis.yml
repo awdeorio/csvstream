@@ -3,72 +3,63 @@
 # https://docs.travis-ci.com/
 # https://docs.travis-ci.com/user/languages/cpp/
 
-# OS
-dist: trusty
-
-# Language
-language: cpp
-
-# Test against multiple compilers
-compiler:
-  - clang
-  - gcc
-
 # Test
 script:
- - make && make test
+ - make -j4 && make test
 
 # Always test the master branch, even when there's no pull request
 branches:
   only:
     - master
 
-# Add GCC 4, 5, 6 and 7
+# Test against multiple compiler versions
+# Based on https://github.com/facebook/fatal/blob/dev/.travis.yml
+language: cpp
 matrix:
   include:
-    # works on Precise and Trusty
     - os: linux
+      compiler: gcc
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
-      env:
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+          sources: ubuntu-toolchain-r-test
+          packages: g++-4.9
+      env: MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
-    # works on Precise and Trusty
     - os: linux
+      compiler: gcc
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+          sources: ubuntu-toolchain-r-test
+          packages: g++-5
+      env: MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
 
-    # works on Precise and Trusty
     - os: linux
+      compiler: gcc
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+          sources: ubuntu-toolchain-r-test
+          packages: g++-6
+      env: MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
 
-    # works on Precise and Trusty
     - os: linux
+      compiler: clang
+      env: MATRIX_EVAL="CC=clang && CXX=clang++"
+
+    - os: linux
+      compiler: clang
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-3.5
+          packages: clang-3.5
+      env: MATRIX_EVAL="CC=clang-3.5 && CXX=clang++-3.5"
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6
+          packages: clang-3.6
+      env: MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
 
 before_install:
     - eval "${MATRIX_EVAL}"
