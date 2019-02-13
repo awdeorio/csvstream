@@ -23,6 +23,9 @@ matrix:
   include:
     - os: linux
       compiler: gcc
+      env: MATRIX_EVAL="CXX=g++"
+    - os: linux
+      compiler: gcc
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
