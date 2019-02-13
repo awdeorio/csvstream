@@ -24,29 +24,24 @@ language: cpp
 matrix:
   include:
 
-    # Ubuntu 14.04.5 LTS Trusty Tahr
-    # GCC 4.8
-    - os: linux
+    - name: "Ubuntu 14.04 Trusty GCC 4.8"
+      os: linux
       dist: trusty
 
-    # Ubuntu 16.04.5 LTS Xenial Xerus
-    # GCC 5.4
-    - os: linux
+    - name: "Ubuntu 16.04 Xenial GCC 5.4"
+      os: linux
       dist: xenial
 
-    # OSX 10.11
-    # Apple LLVM version 8.0.0 (clang-800.0.42.1)
-    - os: osx
+    - name: "OSX 10.11 Apple LLVM 8.0.0"
+      os: osx
       osx_image: xcode8.2.1
 
-    # macOS 10.12
-    # Apple LLVM version 9.0.0 (clang-900.0.39.2)
-    - os: osx
+    - name: "macOS 10.12 Apple LLVM 9.0.0"
+      os: osx
       osx_image: xcode9.2
 
-    # macOS 10.13
-    # Apple LLVM version 10.0.0 (clang-1000.11.45.5)
-    - os: osx
+    - name: "macOS 10.13 Apple LLVM version 10.0.0"
+      os: osx
       osx_image: xcode10.1
 
     # GCC 6
