@@ -27,10 +27,22 @@ matrix:
     - name: "Ubuntu 14.04 Trusty GCC 4.8"
       os: linux
       dist: trusty
+      compiler: gcc
+
+    - name: "Ubuntu 14.04 Trusty Clang 3.5"
+      os: linux
+      dist: trusty
+      compiler: clang
 
     - name: "Ubuntu 16.04 Xenial GCC 5.4"
       os: linux
       dist: xenial
+      compiler: gcc
+
+    - name: "Ubuntu 16.04 Xenial Clang 7"
+      os: linux
+      dist: xenial
+      compiler: clang
 
     - name: "Ubuntu 16.04 Xenial GCC 6.x"
       os: linux
