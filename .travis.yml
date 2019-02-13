@@ -1,15 +1,19 @@
 # Travis CI Configuration
 #
 # https://docs.travis-ci.com/
+# https://docs.travis-ci.com/user/languages/cpp/
 
+# Language
+language: cpp
 
-# Build
-install:
- - make -j
+# Test against multiple compilers
+compiler:
+  - clang
+  - gcc
 
 # Test
 script:
- - make test
+ - make && make test
 
 # Always test the master branch, even when there's no pull request
 branches:
