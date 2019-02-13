@@ -24,26 +24,24 @@ language: cpp
 matrix:
   include:
     - os: linux
+      dist: precise
       compiler: gcc
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-4.9
-      env: MATRIX_EVAL="CXX=g++-4.9"
+      env: MATRIX_EVAL="CXX=g++"  # GCC 4.6.3
     - os: linux
+      dist: trusty
       compiler: gcc
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-5
-      env: MATRIX_EVAL="CXX=g++-5"
+      env: MATRIX_EVAL="CXX=g++"  # GCC 4.8.2
     - os: linux
+      dist: xenial
       compiler: gcc
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-6
-      env: MATRIX_EVAL="CXX=g++-6"
+      env: MATRIX_EVAL="CXX=g++"  # GCC 5.4.0
+    # - os: linux
+    #   compiler: gcc
+    #   addons:
+    #     apt:
+    #       sources: ubuntu-toolchain-r-test
+    #       packages: g++-6
+    #   env: MATRIX_EVAL="CXX=g++-6"
     # Currently fails, issue https://github.com/awdeorio/csvstream/issues/22
     # - os: linux
     #   compiler: gcc
