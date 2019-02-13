@@ -64,7 +64,7 @@ matrix:
     #       packages: g++-7
     #   env: MATRIX_EVAL="CXX=g++-7"
 
-    - name: "macOS 10.11 Aplle LLVM version FIXME"
+    - name: "macOS 10.11 Apple LLVM version 8.0.0"
       os: osx
       osx_image: xcode8
       compiler: clang
