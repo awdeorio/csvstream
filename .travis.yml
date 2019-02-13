@@ -24,7 +24,7 @@ matrix:
         apt:
           sources: ubuntu-toolchain-r-test
           packages: g++-4.9
-      env: MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+      env: MATRIX_EVAL="CXX=g++-4.9"
 
     - os: linux
       compiler: gcc
@@ -32,7 +32,7 @@ matrix:
         apt:
           sources: ubuntu-toolchain-r-test
           packages: g++-5
-      env: MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+      env: MATRIX_EVAL="CXX=g++-5"
 
     - os: linux
       compiler: gcc
@@ -40,7 +40,7 @@ matrix:
         apt:
           sources: ubuntu-toolchain-r-test
           packages: g++-6
-      env: MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+      env: MATRIX_EVAL="CXX=g++-6"
 
     # Currently fails, issue https://github.com/awdeorio/csvstream/issues/22
     #
@@ -50,11 +50,11 @@ matrix:
     #     apt:
     #       sources: ubuntu-toolchain-r-test
     #       packages: g++-7
-    #   env: MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    #   env: MATRIX_EVAL="CXX=g++-7"
 
     - os: linux
       compiler: clang
-      env: MATRIX_EVAL="CC=clang && CXX=clang++"
+      env: MATRIX_EVAL="CXX=clang++"
 
     - os: linux
       compiler: clang
@@ -62,7 +62,7 @@ matrix:
         apt:
           sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-3.5
           packages: clang-3.5
-      env: MATRIX_EVAL="CC=clang-3.5 && CXX=clang++-3.5"
+      env: MATRIX_EVAL="CXX=clang++-3.5"
 
     - os: linux
       compiler: clang
@@ -70,7 +70,7 @@ matrix:
         apt:
           sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6
           packages: clang-3.6
-      env: MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+      env: MATRIX_EVAL="CXX=clang++-3.6"
 
 before_install:
     - eval "${MATRIX_EVAL}"
