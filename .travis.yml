@@ -32,6 +32,16 @@ matrix:
       os: linux
       dist: xenial
 
+    - name: "Ubuntu 16.04 Xenial GCC 6.x"
+      os: linux
+      dist: xenial
+      compiler: gcc
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test
+          packages: g++-6
+      env: MATRIX_EVAL="CXX=g++-6"
+
     - name: "OSX 10.11 Apple LLVM 8.0.0"
       os: osx
       osx_image: xcode8.2.1
@@ -43,15 +53,6 @@ matrix:
     - name: "macOS 10.13 Apple LLVM version 10.0.0"
       os: osx
       osx_image: xcode10.1
-
-    # GCC 6
-    # - os: linux
-    #   compiler: gcc
-    #   addons:
-    #     apt:
-    #       sources: ubuntu-toolchain-r-test
-    #       packages: g++-6
-    #   env: MATRIX_EVAL="CXX=g++-6"
 
     # GCC 7
     # - os: linux
