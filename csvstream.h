@@ -278,8 +278,15 @@ csvstream & csvstream::operator>> (std::vector<std::pair<std::string, std::strin
   if (!read_csv_line(is, data, delimiter)) return *this;
   line_no += 1;
 
+  // When strict mode is disabled, coerce the length of the data.  If data is
+  // larger than header, discard extra values.  If data is smaller than header,
+  // pad data with empty strings.
+  if (!strict) {
+    data.resize(header.size());
+  }
+
   // Check length of data
-  if (strict && row.size() != header.size()) {
+  if (row.size() != header.size()) {
     auto msg = "Number of items in row does not match header. " +
       filename + ":L" + std::to_string(line_no) + " " +
       "header.size() = " + std::to_string(header.size()) + " " +
@@ -289,8 +296,7 @@ csvstream & csvstream::operator>> (std::vector<std::pair<std::string, std::strin
   }
 
   // combine data and header into a row object
-  auto size = strict ? data.size() : std::min(data.size(), header.size());
-  for (size_t i=0; i<size; ++i) {
+  for (size_t i=0; i<data.size(); ++i) {
     row[i] = make_pair(header[i], data[i]);
   }
 
