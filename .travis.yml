@@ -24,23 +24,28 @@ language: cpp
 matrix:
   include:
 
-    - os: linux
+    - name: "Ubuntu 14.04 Trusty GCC 4.8"
+      os: linux
       dist: trusty
       compiler: gcc
 
-    - os: linux
+    - name: "Ubuntu 14.04 Trusty Clang 3.5"
+      os: linux
       dist: trusty
       compiler: clang
 
-    - os: linux
+    - name: "Ubuntu 16.04 Xenial GCC 5.4"
+      os: linux
       dist: xenial
       compiler: gcc
 
-    - os: linux
+    - name: "Ubuntu 16.04 Xenial Clang 7"
+      os: linux
       dist: xenial
       compiler: clang
 
-    - os: linux
+    - name: "Ubuntu 16.04 Xenial GCC 6"
+      os: linux
       dist: xenial
       compiler: gcc
       addons:
@@ -59,15 +64,18 @@ matrix:
     #       packages: g++-7
     #   env: MATRIX_EVAL="CXX=g++-7"
 
-    - os: osx
-      osx_image: xcode8.2.1
+    - name: "macOS 10.11 Aplle LLVM version FIXME"
+      os: osx
+      osx_image: xcode8
       compiler: clang
 
-    - os: osx
+    - name: "macOS 10.12 Apple LLVM version 9.0.0"
+      os: osx
       osx_image: xcode9.2
       compiler: clang
 
-    - os: osx
+    - name: "macOS 10.13 Apple LLVM version 10.0.0"
+      os: osx
       osx_image: xcode10.1
       compiler: clang
 
