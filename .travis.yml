@@ -1,0 +1,17 @@
+# Travis CI Configuration
+#
+# https://docs.travis-ci.com/
+
+
+# Build
+install:
+ - make -j
+
+# Test
+script:
+ - make test
+
+# Always test the master branch, even when there's no pull request
+branches:
+  only:
+    - master
