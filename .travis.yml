@@ -5,6 +5,9 @@
 #
 # Example with multiple compiler versions, including both GCC and Clang
 # https://github.com/facebook/fatal/blob/dev/.travis.yml
+#
+# OSX Xcode and Clang versions
+# https://trac.macports.org/wiki/XcodeVersionInfo
 
 
 # Test
@@ -42,7 +45,6 @@ matrix:
           packages: g++-6
       env: MATRIX_EVAL="CXX=g++-6"
     # Currently fails, issue https://github.com/awdeorio/csvstream/issues/22
-    #
     # - os: linux
     #   compiler: gcc
     #   addons:
@@ -50,43 +52,14 @@ matrix:
     #       sources: ubuntu-toolchain-r-test
     #       packages: g++-7
     #   env: MATRIX_EVAL="CXX=g++-7"
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-3.5
-          packages: clang-3.5
-      env: MATRIX_EVAL="CXX=clang++-3.5"
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-4.0
-          packages: clang-4.0
-      env: MATRIX_EVAL="CXX=clang++-4.0"
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-5.0
-          packages: clang-5.0
-      env: MATRIX_EVAL="CXX=clang++-5.0"
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-6.0
-          packages: clang-6.0
-      env: MATRIX_EVAL="CXX=clang++-6.0"
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test, llvm-toolchain-precise-7.0
-          packages: clang-7.0
-      env: MATRIX_EVAL="CXX=clang++-7.0"
     - os: osx
-      osx_image: xcode8
+      osx_image: xcode8.2.1
+      env: MATRIX_EVAL="CXX=clang++"
+    - os: osx
+      osx_image: xcode9.2
+      env: MATRIX_EVAL="CXX=clang++"
+    - os: osx
+      osx_image: xcode10.1
       env: MATRIX_EVAL="CXX=clang++"
 before_install:
     - eval "${MATRIX_EVAL}"
