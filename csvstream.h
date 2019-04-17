@@ -43,7 +43,7 @@ public:
   // Destructor
   ~csvstream();
 
-  // Return true if an error flag on underlying stream is set
+  // Return false if an error flag on underlying stream is set
   explicit operator bool() const;
 
   // Return header processed by constructor
