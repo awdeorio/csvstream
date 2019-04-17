@@ -1,5 +1,7 @@
 csvstream
 =========
+[![Build Status](https://travis-ci.com/awdeorio/csvstream.svg?branch=master)](https://travis-ci.com/awdeorio/csvstream)
+
 An easy-to-use CSV file parser for C++
 
 Andrew DeOrio <awdeorio@umich.edu><br>
