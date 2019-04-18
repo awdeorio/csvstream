@@ -23,7 +23,7 @@
 // A custom exception type
 class csvstream_exception : public std::exception {
 public:
-  const char * what () const throw () {
+  const char * what () const noexcept {
     return msg.c_str();
   }
   const std::string msg;
