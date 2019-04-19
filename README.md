@@ -7,6 +7,15 @@ An easy-to-use CSV file parser for C++
 Andrew DeOrio <awdeorio@umich.edu><br>
 http://andrewdeorio.com
 
+**Table of Contents**
+- [Quick start](#quick-start)
+- [Example 1: Read one column](#example-1-read-one-column)
+- [Example 2: Read each row and each column with nested loops](#example-2-read-each-row-and-each-column-with-nested-loops)
+- [Example 3: Maintaining order of columns in each row](#example-3-maintaining-order-of-columns-in-each-row)
+- [Changing the delimiter](#changing-the-delimiter)
+- [Allow too many or too few values in a row](#allow-too-many-or-too-few-values-in-a-row)
+
+
 ## Quick start
 ```console
 $ git clone https://github.com/awdeorio/csvstream.git
@@ -14,11 +23,11 @@ $ cd csvstream/
 $ make test
 ```
 
-## Example 1
+## Example 1: Read one column
 This example reads one column from a CSV file.
 
 ```c++
-// csvstream_example1.cpp
+// example1.cpp
 #include "csvstream.h"
 #include <iostream>
 #include <string>
@@ -28,7 +37,7 @@ using namespace std;
 
 int main() {
   // Open file
-  csvstream csvin("example.csv");
+  csvstream csvin("input.csv");
 
   // Rows have key = column name, value = cell datum
   map<string, string> row;
@@ -43,7 +52,7 @@ int main() {
 
 Input
 ```console
-$ cat example.csv
+$ cat input.csv
 name,animal
 Fergie,horse
 Myrtle II,chicken
@@ -52,25 +61,25 @@ Oscar,cat
 
 Compile
 ```console
-$ make csvstream_example1
+$ make example1
   # OR
-$ g++ -std=c++11 csvstream_example1.cpp -o csvstream_example1
+$ g++ -std=c++11 example1.cpp -o example1
 ```
 
 Output
 ```console
-$ ./csvstream_example1
+$ ./example1
 horse
 chicken
 cat
 ```
 
 
-## Example 2
+## Example 2: Read each row and each column with nested loops
 This example has an outer loop for each row and an inner loop for each column.
 
 ```c++
-//csvstream_example2.cpp
+//example2.cpp
 #include "csvstream.h"
 #include <iostream>
 #include <string>
@@ -80,7 +89,7 @@ using namespace std;
 
 int main() {
   // Open file
-  csvstream csvin("example.csv");
+  csvstream csvin("input.csv");
 
   // A row is a map<string, string>, key = column name, value = datum
   map<string, string> row;
@@ -100,7 +109,7 @@ int main() {
 
 Input
 ```console
-$ cat example.csv
+$ cat input.csv
 name,animal
 Fergie,horse
 Myrtle II,chicken
@@ -109,14 +118,14 @@ Oscar,cat
 
 Compile
 ```console
-$ make csvstream_example2
+$ make example2
   # OR
-$ g++ -std=c++11 csvstream_example2.cpp -o csvstream_example2
+$ g++ -std=c++11 example2.cpp -o example2
 ```
 
-Output
+Output.  Notice output order within each row is `animal` followed by `name`.  This is because iterating over a `map` yields items in sorted order by key.
 ```console
-$ ./csvstream_example2
+$ ./example2
 row:
   animal: horse
   name: Fergie
@@ -129,18 +138,11 @@ row:
 ```
 
 
-## Example 3
-This example uses a vector-of-pair to keep the order of the items read from the file.
+## Example 3: Maintaining order of columns in each row
+This example uses a vector-of-pair to maintain the order of values read from each row.
 
 ```c++
-/* csvstream_example3.cpp
- *
- * Andrew DeOrio <awdeorio@umich.edu>
- *
- * An easy-to-use CSV file parser for C++
- * https://github.com/awdeorio/csvstream
- */
-
+// example3.cpp
 #include "csvstream.h"
 #include <iostream>
 #include <string>
@@ -151,7 +153,7 @@ using namespace std;
 
 int main() {
   // Open file
-  csvstream csvin("example.csv");
+  csvstream csvin("input.csv");
 
   // A row is a vector<pair<string, string>>
   // key = column name, value = cell datum
@@ -170,16 +172,47 @@ int main() {
 }
 ```
 
-
-## Constructor options
-The constructor accepts several optional arguments.
-
-Change the delimiter between values on a row.  Default=`','`.
-```c++
-csvstream csvin("example.csv", delimiter='|');
+Input
+```console
+$ cat input.csv
+name,animal
+Fergie,horse
+Myrtle II,chicken
+Oscar,cat
 ```
 
-Disable strict mode.  When `strict=true`, raise an exception if a row contains too many values or too few compared to the header.  When `strict=false`, ignore extra values and set missing values to empty string.
+Compile
+```console
+$ make example3
+  # OR
+$ g++ -std=c++11 example3.cpp -o example3
+```
+
+Output.  Notice output order within each row is `name` followed by `animal`.  This is the order that the columns appear in the CSV file.
+```console
+$ ./example3
+row:
+  name: Fergie
+  animal: horse
+row:
+  name: Myrtle II
+  animal: chicken
+row:
+  name: Oscar
+  animal: cat
+```
+
+
+## Changing the delimiter
+By default, values in a row are delimited by a comma `,`.  Change the delimiter with the `delimiter` constructor parameter.
+
+This example changes the delimiter to the `|` character.
 ```c++
-csvstream csvin("example.csv", delimiter=',', strict=false);
+csvstream csvin("input.csv", '|');
+```
+
+## Allow too many or too few values in a row
+By default, if a row has too many or too few values, csvstream raises and exception.  With strict mode disabled, it will ignore extra values and set missing values to empty string.  You must specify a delimited when using strict mode.
+```c++
+csvstream csvin("input.csv", ',', false);
 ```
