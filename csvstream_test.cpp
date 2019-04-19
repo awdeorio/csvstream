@@ -62,7 +62,7 @@ int main() {
 
 
 // data for next few unit tests
-const string input_filename_animals = "csvstream_example.csv";
+const string input_filename_animals = "input.csv";
 const vector<string> header_correct_animals = {"name", "animal"};
 const vector<map<string, string>> output_correct_animals =
   {
