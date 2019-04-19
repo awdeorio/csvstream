@@ -10,9 +10,9 @@
 # Top level executable (should correspond to a cpp file with the same name)
 EXECUTABLE := \
 	csvstream_test \
-  csvstream_example1 \
-  csvstream_example2 \
-  csvstream_example3
+  example1 \
+  example2 \
+  example3
 
 # Default target, this is what happens when you just type "make"
 all : $(EXECUTABLE)

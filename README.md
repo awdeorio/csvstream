@@ -28,7 +28,7 @@ using namespace std;
 
 int main() {
   // Open file
-  csvstream csvin("csvstream_example.csv");
+  csvstream csvin("example.csv");
 
   // Rows have key = column name, value = cell datum
   map<string, string> row;
@@ -43,7 +43,7 @@ int main() {
 
 Input
 ```console
-$ cat csvstream_example.csv
+$ cat example.csv
 name,animal
 Fergie,horse
 Myrtle II,chicken
@@ -80,7 +80,7 @@ using namespace std;
 
 int main() {
   // Open file
-  csvstream csvin("csvstream_example.csv");
+  csvstream csvin("example.csv");
 
   // A row is a map<string, string>, key = column name, value = datum
   map<string, string> row;
@@ -100,7 +100,7 @@ int main() {
 
 Input
 ```console
-$ cat csvstream_example.csv
+$ cat example.csv
 name,animal
 Fergie,horse
 Myrtle II,chicken
@@ -151,7 +151,7 @@ using namespace std;
 
 int main() {
   // Open file
-  csvstream csvin("csvstream_example.csv");
+  csvstream csvin("example.csv");
 
   // A row is a vector<pair<string, string>>
   // key = column name, value = cell datum
@@ -176,10 +176,10 @@ The constructor accepts several optional arguments.
 
 Change the delimiter between values on a row.  Default=`','`.
 ```c++
-csvstream csvin("csvstream_example.csv", delimiter='|');
+csvstream csvin("example.csv", delimiter='|');
 ```
 
 Disable strict mode.  When `strict=true`, raise an exception if a row contains too many values or too few compared to the header.  When `strict=false`, ignore extra values and set missing values to empty string.
 ```c++
-csvstream csvin("csvstream_example.csv", delimiter=',', strict=false);
+csvstream csvin("example.csv", delimiter=',', strict=false);
 ```
