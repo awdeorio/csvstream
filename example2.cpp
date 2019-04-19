@@ -15,7 +15,7 @@ using namespace std;
 
 int main() {
   // Open file
-  csvstream csvin("csvstream_example.csv");
+  csvstream csvin("input.csv");
 
   // A row is a map<string, string>, key = column name, value = cell datum
   map<string, string> row;
