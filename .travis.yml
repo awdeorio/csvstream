@@ -54,15 +54,15 @@ matrix:
           packages: g++-6
       env: MATRIX_EVAL="CXX=g++-6"
 
-    # - name: "Ubuntu 16.04 Xenial GCC 7"
-    #   os: linux
-    #   dist: xenial
-    #   compiler: gcc
-    #   addons:
-    #     apt:
-    #       sources: ubuntu-toolchain-r-test
-    #       packages: g++-7
-    #   env: MATRIX_EVAL="CXX=g++-7"
+    - name: "Ubuntu 16.04 Xenial GCC 7"
+      os: linux
+      dist: xenial
+      compiler: gcc
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test
+          packages: g++-7
+      env: MATRIX_EVAL="CXX=g++-7"
 
     - name: "macOS 10.11 Apple LLVM version 8.0.0"
       os: osx
