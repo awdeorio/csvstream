@@ -109,8 +109,14 @@ static bool read_csv_line(std::istream &is,
     switch (state) {
     case BEGIN:
       // We need this state transition to properly handle cases where nothing
-      // is extracted.  Note the intended switch fallthrough.
+      // is extracted.
       state = UNQUOTED;
+
+      // Intended switch fallthrough.  Beginning with GCC7, this triggers an
+      // error by default.  Disable the error for this specific line.
+      #if __GNUG__ && __GNUC__ >= 7
+      [[fallthrough]];
+      #endif
 
     case UNQUOTED:
       if (c == '"') {
