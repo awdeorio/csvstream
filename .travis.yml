@@ -54,7 +54,7 @@ matrix:
       dist: bionic
       compiler: clang
 
-    - name: "Ubuntu 16.04 Xenial GCC 6"
+    - name: "Linux GCC 6"
       os: linux
       dist: xenial
       compiler: gcc
@@ -63,6 +63,16 @@ matrix:
           sources: ubuntu-toolchain-r-test
           packages: g++-6
       env: MATRIX_EVAL="CXX=g++-6"
+
+    - name: "Linux GCC 7"
+      os: linux
+      dist: xenial
+      compiler: gcc
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test
+          packages: g++-7
+      env: MATRIX_EVAL="CXX=g++-7"
 
     - name: "Linux GCC 8"
       os: linux
