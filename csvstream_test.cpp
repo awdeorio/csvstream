@@ -149,7 +149,7 @@ void test_emptyfields() {
     while (csvin >> row) {
       output_observed.push_back(row);
     }
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     cout << e.what() << endl;
     assert(0);
   }
@@ -183,7 +183,7 @@ void test_tsv() {
     while (csvin >> row) {
       output_observed.push_back(row);
     }
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     cout << e.what() << endl;
     assert(0);
   }
@@ -207,7 +207,7 @@ void test_too_few_cols_in_the_middle_strict() {
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     //if we caught an exception, then it worked
     return;
   }
@@ -231,7 +231,7 @@ void test_too_few_cols_in_the_middle_notstrict() {
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     // If we caught an exception, then strict=false failed to coerce the number
     // of values.
     assert(0);
@@ -252,7 +252,7 @@ void test_too_few_cols_at_the_end_strict() {
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     //if we caught an exception, then it worked
     return;
   }
@@ -275,7 +275,7 @@ void test_too_few_cols_at_the_end_notstrict() {
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     // If we caught an exception, then strict=false failed to coerce the number
     // of values.
     assert(0);
@@ -296,7 +296,7 @@ void test_too_many_cols_strict() {
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     //if we caught an exception, then it worked
     return;
   }
@@ -320,7 +320,7 @@ void test_too_many_cols_notstrict() {
   map<string, string> row;
   try {
     while (csvin >> row); // throw away data
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     // If we caught an exception, then strict=false failed to coerce the number
     // of values.
     assert(0);
@@ -353,7 +353,7 @@ void test_no_newline_at_the_end() {
     while (csvin >> row) {
       output_observed.push_back(row);
     }
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     cout << e.what() << endl;
     assert(0);
   }
@@ -386,7 +386,7 @@ void test_quotes() {
     while (csvin >> row) {
       output_observed.push_back(row);
     }
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     cout << e.what() << endl;
     assert(0);
   }
@@ -420,7 +420,7 @@ void test_escape_quotes() {
     while (csvin >> row) {
       output_observed.push_back(row);
     }
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     cout << e.what() << endl;
     assert(0);
   }
@@ -449,7 +449,7 @@ void test_multiline_quotes() {
     while (csvin >> row) {
       output_observed.push_back(row);
     }
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     cout << e.what() << endl;
     assert(0);
   }
@@ -483,7 +483,7 @@ void test_osx_line_endings() {
     while (csvin >> row) {
       output_observed.push_back(row);
     }
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     cout << e.what() << endl;
     assert(0);
   }
@@ -517,7 +517,7 @@ void test_windows_line_endings() {
     while (csvin >> row) {
       output_observed.push_back(row);
     }
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     cout << e.what() << endl;
     assert(0);
   }
@@ -551,7 +551,7 @@ void test_ordered() {
     while (csvin >> row) {
       output_observed.push_back(row);
     }
-  } catch(csvstream_exception e) {
+  } catch(const csvstream_exception &e) {
     cout << e.what() << endl;
     assert(0);
   }
@@ -585,7 +585,7 @@ void test_strict_notsctrict() {
       while (csvin >> row) {
         output_observed.push_back(row);
       }
-    } catch(csvstream_exception e) {
+    } catch(const csvstream_exception &e) {
       cout << e.what() << endl;
       assert(0);
     }
@@ -618,7 +618,7 @@ void test_notstrict_exceptions() {
     vector<pair<string, string>> row;
     try {
       while (csvin >> row);
-    } catch(csvstream_exception e) {
+    } catch(const csvstream_exception &e) {
       cout << e.what() << endl;
       // If exception was caught, it didn't work
       assert(0);
