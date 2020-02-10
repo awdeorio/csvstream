@@ -44,7 +44,17 @@ matrix:
       dist: xenial
       compiler: clang
 
-    - name: "Ubuntu 16.04 Xenial GCC 6"
+    - name: "Ubuntu 18.04 Bionic GCC 7"
+      os: linux
+      dist: bionic
+      compiler: gcc
+
+    - name: "Ubuntu 18.04 Bionic Clang 7"
+      os: linux
+      dist: bionic
+      compiler: clang
+
+    - name: "Linux GCC 6"
       os: linux
       dist: xenial
       compiler: gcc
@@ -54,7 +64,7 @@ matrix:
           packages: g++-6
       env: MATRIX_EVAL="CXX=g++-6"
 
-    - name: "Ubuntu 16.04 Xenial GCC 7"
+    - name: "Linux GCC 7"
       os: linux
       dist: xenial
       compiler: gcc
@@ -63,6 +73,24 @@ matrix:
           sources: ubuntu-toolchain-r-test
           packages: g++-7
       env: MATRIX_EVAL="CXX=g++-7"
+
+    - name: "Linux GCC 8"
+      os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test
+          packages: g++-8
+      env: MATRIX_EVAL="CXX=g++-8"
+
+    - name: "Linux GCC 9"
+      os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test
+          packages: g++-9
+      env: MATRIX_EVAL="CXX=g++-9"
 
     - name: "macOS 10.11 Apple LLVM version 8.0.0"
       os: osx
@@ -77,6 +105,11 @@ matrix:
     - name: "macOS 10.13 Apple LLVM version 10.0.0"
       os: osx
       osx_image: xcode10.1
+      compiler: clang
+
+    - name: "macOS 10.14 Apple LLVM version 11.0.0"
+      os: osx
+      osx_image: xcode11.3
       compiler: clang
 
 before_install:
