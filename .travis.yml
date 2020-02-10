@@ -99,5 +99,10 @@ matrix:
       osx_image: xcode10.1
       compiler: clang
 
+    - name: "macOS 10.14 Apple LLVM version 11.0.0"
+      os: osx
+      osx_image: xcode11.3
+      compiler: clang
+
 before_install:
     - eval "${MATRIX_EVAL}"
