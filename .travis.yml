@@ -44,12 +44,12 @@ matrix:
       dist: xenial
       compiler: clang
 
-    - name: "Ubuntu 18.04 Bionic GCC FIXME"
+    - name: "Ubuntu 18.04 Bionic GCC 7"
       os: linux
       dist: bionic
       compiler: gcc
 
-    - name: "Ubuntu 18.04 Bionic Clang FIXME"
+    - name: "Ubuntu 18.04 Bionic Clang 7"
       os: linux
       dist: bionic
       compiler: clang
@@ -63,16 +63,6 @@ matrix:
           sources: ubuntu-toolchain-r-test
           packages: g++-6
       env: MATRIX_EVAL="CXX=g++-6"
-
-    - name: "Ubuntu 16.04 Xenial GCC 7"
-      os: linux
-      dist: xenial
-      compiler: gcc
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-7
-      env: MATRIX_EVAL="CXX=g++-7"
 
     - name: "Ubuntu 16.04 Xenial GCC 8"
       os: linux
