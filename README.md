@@ -212,7 +212,7 @@ csvstream csvin("input.csv", '|');
 ```
 
 ## Allow too many or too few values in a row
-By default, if a row has too many or too few values, csvstream raises and exception.  With strict mode disabled, it will ignore extra values and set missing values to empty string.  You must specify a delimited when using strict mode.
+By default, if a row has too many or too few values, csvstream raises and exception.  With strict mode disabled, it will ignore extra values and set missing values to empty string.  You must specify a delimiter when using strict mode.
 ```c++
 csvstream csvin("input.csv", ',', false);
 ```
