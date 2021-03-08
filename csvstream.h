@@ -110,6 +110,7 @@ static bool read_csv_line(std::istream &is,
     case BEGIN:
       // We need this state transition to properly handle cases where nothing
       // is extracted.
+      data.back() += c;
       state = UNQUOTED;
 
       // Intended switch fallthrough.  Beginning with GCC7, this triggers an
