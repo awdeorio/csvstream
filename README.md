@@ -14,6 +14,7 @@ http://andrewdeorio.com
 - [Example 3: Maintaining order of columns in each row](#example-3-maintaining-order-of-columns-in-each-row)
 - [Changing the delimiter](#changing-the-delimiter)
 - [Allow too many or too few values in a row](#allow-too-many-or-too-few-values-in-a-row)
+- [Error handling](#error-handling)
 
 
 ## Quick start
@@ -215,4 +216,32 @@ csvstream csvin("input.csv", '|');
 By default, if a row has too many or too few values, csvstream raises and exception.  With strict mode disabled, it will ignore extra values and set missing values to empty string.  You must specify a delimiter when using strict mode.
 ```c++
 csvstream csvin("input.csv", ',', false);
+```
+
+## Error handling
+If an error occurs, `csvstream` functions throw a `cstream_exception` .  For example:
+
+```c++
+// example4.cpp
+#include "csvstream.h"
+#include <iostream>
+#include <string>
+#include <map>
+using namespace std;
+
+
+int main() {
+  // Open file
+  string filename = "input.csv";
+  try {
+    csvstream csvin(filename);
+    map<string, string> row;
+    while (csvin >> row) {
+      cout << row["animal"] << "\n";
+    }
+  } catch(const csvstream_exception &e) {
+    cerr << "Error: " << e.what() << "\n";
+    return 1;
+  }
+}
 ```

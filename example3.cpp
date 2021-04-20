@@ -1,8 +1,8 @@
-/* csvstream_example3.cpp
+/* example3.cpp
  *
  * Andrew DeOrio <awdeorio@umich.edu>
  *
- * An easy-to-use CSV file parser for C++
+ * csvstream: An easy-to-use CSV file parser for C++
  * https://github.com/awdeorio/csvstream
  */
 
