@@ -34,7 +34,7 @@ public:
 // csvstream interface
 class csvstream {
 public:
-  // Constructor from filename
+  // Constructor from filename. Throws csvstream_exception if open fails.
   csvstream(const std::string &filename, char delimiter=',', bool strict=true);
 
   // Constructor from stream
@@ -49,10 +49,13 @@ public:
   // Return header processed by constructor
   std::vector<std::string> getheader() const;
 
-  // Stream extraction operator reads one row
+  // Stream extraction operator reads one row. Throws csvstream_exception if
+  // the number of items in a row does not match the header.
   csvstream & operator>> (std::map<std::string, std::string>& row);
 
-  // Stream extraction operator reads one row, keeping column order
+  // Stream extraction operator reads one row, keeping column order. Throws
+  // csvstream_exception if the number of items in a row does not match the
+  // header.
   csvstream & operator>> (std::vector<std::pair<std::string, std::string> >& row);
 
 private:
