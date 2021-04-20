@@ -12,7 +12,8 @@ EXECUTABLE := \
 	csvstream_test \
   example1 \
   example2 \
-  example3
+  example3 \
+  example4
 
 # Default target, this is what happens when you just type "make"
 all : $(EXECUTABLE)
