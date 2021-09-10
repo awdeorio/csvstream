@@ -64,8 +64,6 @@ jobs:
         env:
           CXX: ${{ matrix.compiler }}
         run: |
-          which $CXX
-          $CXX --version
           make -j
           make test
 
