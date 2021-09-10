@@ -1,0 +1,50 @@
+# GitHub Continuous Integration Configuration
+name: Regression-Tests
+
+# Define conditions for when to run this action
+on:
+  pull_request: # Run on all pull requests
+  push: # Run on all pushes to master
+    branches:
+      - master
+
+# A workflow run is made up of one or more jobs.  Each job has an id.  For
+# example, "functional-tests (macOS-latest, g++)".
+jobs:
+  test:
+    name: functional-tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Define OS and compiler versions to use
+      #
+      # Virtual Environments: OSes and preinstalled software:
+      # https://github.com/actions/virtual-environments
+      #
+      # Many are commented out to avoid going over budget
+      matrix:
+        include:
+          - os: ubuntu-18.04
+            compiler: g++-4.8
+          - os: ubuntu-latest
+            compiler: g++
+          - os: macOS-latest
+            compiler: g++
+
+    # Sequence of tasks for this job
+    steps:
+      # Check out latest code using a pre-existing GH action
+      # Docs: https://github.com/actions/checkout
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install old compiler
+        if: ${{ matrix.compiler == 'g++-4.8' }}
+        run: sudo apt-get install g++-4.8
+
+      # Run tests
+      - name: Run tests
+        env:
+          CXX: ${{ matrix.compiler }}
+        run: |
+          make -j
+          make test
