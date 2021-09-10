@@ -1,8 +1,4 @@
 # GitHub Continuous Integration Configuration
-#
-# EECS 280 contributing docs and GitHub Action docs:
-# https://github.com/eecs280staff/p1-stats/blob/master/CONTRIBUTING.md
-# https://docs.github.com/en/free-pro-team@latest/actions
 name: Regression-Tests
 
 # Define conditions for when to run this action
@@ -66,16 +62,3 @@ jobs:
         run: |
           make -j
           make test
-
-      # Uncomment this chunk of YML code to open an SSH debug session to the GH
-      # actions server in case of a hard-to-debug failure. The SSH session is
-      # provided by tmate via a pre-existing GH action.
-      # Docs: https://github.com/mxschmitt/action-tmate
-      #
-      # Warning: use this sparingly since it will consume GitHub action credits
-      # until the SSH session is closed.
-      # \/ UNCOMMENT \/
-      # - name: Open SSH session on test failure
-      #   if: ${{ failure() }}
-      #   uses: mxschmitt/action-tmate@v3
-      # /\ UNCOMMENT /\
