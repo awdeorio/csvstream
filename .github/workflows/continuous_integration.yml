@@ -1,0 +1,98 @@
+# GitHub Continuous Integration Configuration
+#
+# EECS 280 contributing docs and GitHub Action docs:
+# https://github.com/eecs280staff/p1-stats/blob/master/CONTRIBUTING.md
+# https://docs.github.com/en/free-pro-team@latest/actions
+name: Regression-Tests
+
+# Define conditions for when to run this action
+on:
+  pull_request: # Run on all pull requests
+  push: # Run on all pushes to master
+    branches:
+      - master
+
+# A workflow run is made up of one or more jobs.  Each job has an id.  For
+# example, "functional-tests (macOS-latest, g++)".
+jobs:
+  test:
+    name: functional-tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Define OS and compiler versions to use
+      #
+      # Virtual Environments: OSes and preinstalled software:
+      # https://github.com/actions/virtual-environments
+      #
+      # Many are commented out to avoid going over budget
+      matrix:
+        include:
+          - os: ubuntu-18.04
+            compiler: g++-4.8
+          - os: ubuntu-16.04
+            compiler: g++-5
+          - os: ubuntu-18.04
+            compiler: g++-7
+          - os: ubuntu-18.04
+            compiler: g++-8
+          - os: ubuntu-18.04
+            compiler: g++-9
+          - os: ubuntu-18.04
+            compiler: g++-10
+          - os: ubuntu-18.04
+            compiler: clang++-8
+          - os: ubuntu-18.04
+            compiler: clang++-9
+          - os: ubuntu-latest
+            compiler: g++
+          - os: macOS-latest
+            compiler: g++
+
+    # Sequence of tasks for this job
+    steps:
+      # Check out latest code using a pre-existing GH action
+      # Docs: https://github.com/actions/checkout
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Regression tests should only be run when code is changed.
+      # File changes in the current pull request or push must be
+      # searched to detect whether any code changes were made.
+      # If we find that only docs were changed, we will not waste
+      # GH Action credits to run the regression test suite.
+      # Docs: https://github.com/dorny/paths-filter
+      - uses: dorny/paths-filter@v2
+        name: Check for code changes
+        id: changes
+        with:
+          filters: |
+            notdocs:
+              - "!docs/**"
+
+      - name: Install old compiler
+        if: ${{ steps.changes.outputs.notdocs == 'true' && matrix.compiler == 'g++-4.8' }}
+        run: sudo apt-get install g++-4.8
+
+      # Run tests
+      - name: Run tests
+        if: ${{ steps.changes.outputs.notdocs == 'true' }}
+        env:
+          CXX: ${{ matrix.compiler }}
+        run: |
+          which $CXX
+          $CXX --version
+          make public
+          make autograde
+
+      # Uncomment this chunk of YML code to open an SSH debug session to the GH
+      # actions server in case of a hard-to-debug failure. The SSH session is
+      # provided by tmate via a pre-existing GH action.
+      # Docs: https://github.com/mxschmitt/action-tmate
+      #
+      # Warning: use this sparingly since it will consume GitHub action credits
+      # until the SSH session is closed.
+      # \/ UNCOMMENT \/
+      # - name: Open SSH session on test failure
+      #   if: ${{ failure() }}
+      #   uses: mxschmitt/action-tmate@v3
+      # /\ UNCOMMENT /\
