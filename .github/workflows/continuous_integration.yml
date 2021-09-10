@@ -56,12 +56,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install old compiler
-        if: ${{ steps.changes.outputs.notdocs == 'true' && matrix.compiler == 'g++-4.8' }}
+        if: ${{ matrix.compiler == 'g++-4.8' }}
         run: sudo apt-get install g++-4.8
 
       # Run tests
       - name: Run tests
-        if: ${{ steps.changes.outputs.notdocs == 'true' }}
         env:
           CXX: ${{ matrix.compiler }}
         run: |
