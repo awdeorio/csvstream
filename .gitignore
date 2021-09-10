@@ -1,7 +1,5 @@
 *.o
 *.out
 *.passed
-example1
-example2
-example3
+example[0-9]
 csvstream_test
