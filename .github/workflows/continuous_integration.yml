@@ -55,20 +55,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Regression tests should only be run when code is changed.
-      # File changes in the current pull request or push must be
-      # searched to detect whether any code changes were made.
-      # If we find that only docs were changed, we will not waste
-      # GH Action credits to run the regression test suite.
-      # Docs: https://github.com/dorny/paths-filter
-      - uses: dorny/paths-filter@v2
-        name: Check for code changes
-        id: changes
-        with:
-          filters: |
-            notdocs:
-              - "!docs/**"
-
       - name: Install old compiler
         if: ${{ steps.changes.outputs.notdocs == 'true' && matrix.compiler == 'g++-4.8' }}
         run: sudo apt-get install g++-4.8
@@ -81,8 +67,8 @@ jobs:
         run: |
           which $CXX
           $CXX --version
-          make public
-          make autograde
+          make -j
+          make test
 
       # Uncomment this chunk of YML code to open an SSH debug session to the GH
       # actions server in case of a hard-to-debug failure. The SSH session is
