@@ -1,7 +1,7 @@
 /* -*- mode: c++ -*- */
 #ifndef CSVSTREAM_H
 #define CSVSTREAM_H
-/* csvstream.h
+/* csvstream.hpp
  *
  * Andrew DeOrio <awdeorio@umich.edu>
  *

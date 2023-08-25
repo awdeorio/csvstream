@@ -23,8 +23,6 @@ jobs:
       # Many are commented out to avoid going over budget
       matrix:
         include:
-          - os: ubuntu-18.04
-            compiler: g++-4.8
           - os: ubuntu-latest
             compiler: g++
           - os: macOS-latest
@@ -36,10 +34,6 @@ jobs:
       # Docs: https://github.com/actions/checkout
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Install old compiler
-        if: ${{ matrix.compiler == 'g++-4.8' }}
-        run: sudo apt-get install g++-4.8
 
       # Run tests
       - name: Run tests
