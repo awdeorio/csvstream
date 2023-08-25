@@ -29,7 +29,7 @@ This example reads one column from a CSV file.
 
 ```c++
 // example1.cpp
-#include "csvstream.h"
+#include "csvstream.hpp"
 #include <iostream>
 #include <string>
 #include <map>
@@ -81,7 +81,7 @@ This example has an outer loop for each row and an inner loop for each column.
 
 ```c++
 //example2.cpp
-#include "csvstream.h"
+#include "csvstream.hpp"
 #include <iostream>
 #include <string>
 #include <map>
@@ -144,7 +144,7 @@ This example uses a vector-of-pair to maintain the order of values read from eac
 
 ```c++
 // example3.cpp
-#include "csvstream.h"
+#include "csvstream.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -223,7 +223,7 @@ If an error occurs, `csvstream` functions throw a `cstream_exception` .  For exa
 
 ```c++
 // example4.cpp
-#include "csvstream.h"
+#include "csvstream.hpp"
 #include <iostream>
 #include <string>
 #include <map>
