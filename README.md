@@ -240,7 +240,7 @@ int main() {
       cout << row["animal"] << "\n";
     }
   } catch(const csvstream_exception &e) {
-    cerr << "Error: " << e.what() << "\n";
+    cerr << e.what() << "\n";
     return 1;
   }
 }
